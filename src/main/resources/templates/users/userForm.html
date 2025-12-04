@@ -1,0 +1,11 @@
+{{ > partials/header }}
+<form method="post" action="/users/create">
+{{#user}}
+	<input type="text" placeholder="Prénom" name="firstname" value="{{firstname}}">
+	<input type="text" placeholder="Nom" name="lastname" value="{{lastname}}">
+	<input type="text" placeholder="Login" name="username" value="{{username}}">
+	<input type="email" placeholder="Email" name="email" value="{{email}}">
+	<button type="submit">Valider</button>
+{{/user}}
+</form>
+{{ > partials/footer }}

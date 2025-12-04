@@ -1,0 +1,20 @@
+{{ > partials/header }}
+
+<h1>Détail de l’utilisateur</h1>
+
+<div class="card">
+    <p><span class="label">Prénom :</span> {{user.firstname}}</p>
+    <p><span class="label">Nom :</span> {{user.lastname}}</p>
+    <p><span class="label">Nom d’utilisateur :</span> {{user.username}}</p>
+    <p><span class="label">Email :</span> {{user.email}}</p>
+    <p><span class="label">ID :</span> {{user.id}}</p>
+</div>
+
+<div class="actions">
+    <p>
+        <a href="/users">⬅ Retour à la liste</a> |
+        <a href="/users/create">➕ Créer un nouvel utilisateur</a>
+    </p>
+</div>
+
+{{ > partials/footer }}
