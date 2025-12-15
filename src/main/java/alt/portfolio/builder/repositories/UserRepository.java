@@ -1,5 +1,6 @@
 package alt.portfolio.builder.repositories;
 
+import java.util.Optional;
 import java.util.UUID;
 
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -9,8 +10,13 @@ import alt.portfolio.builder.entities.User;
 
 @Repository
 public interface UserRepository extends JpaRepository<User, UUID> {
-	 boolean existsByUsername(String username);
-	 
-	 
 
+    User findByUsername(String username);
+
+    // Methode pour l'authentification (username OU email)
+    Optional<User> findByUsernameOrEmail(String username, String email);
+
+    boolean existsByUsername(String username);
+
+    boolean existsByEmail(String email);
 }
