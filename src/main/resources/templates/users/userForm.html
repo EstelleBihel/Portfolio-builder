@@ -1,11 +1,13 @@
 {{ > partials/header }}
-<form method="post" action="/users/create">
-{{#user}}
-	<input type="text" placeholder="Prénom" name="firstname" value="{{firstname}}">
-	<input type="text" placeholder="Nom" name="lastname" value="{{lastname}}">
-	<input type="text" placeholder="Login" name="username" value="{{username}}">
-	<input type="email" placeholder="Email" name="email" value="{{email}}">
-	<button type="submit">Valider</button>
-{{/user}}
+
+<form method="post" action="{{#isEdit}}/users/{{user.id}}/edit{{/isEdit}}{{^isEdit}}/users/create{{/isEdit}}">
+    <input type="text" placeholder="Prénom" name="firstname" value="{{user.firstname}}" required>
+    <input type="text" placeholder="Nom" name="lastname" value="{{user.lastname}}" required>
+    <input type="text" placeholder="Login" name="username" value="{{user.username}}" required>
+    <input type="email" placeholder="Email" name="email" value="{{user.email}}" required>
+    <button type="submit">Valider</button>
 </form>
+
+<a href="/users">← Retour à la liste</a>
+
 {{ > partials/footer }}

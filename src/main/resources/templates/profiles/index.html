@@ -1,0 +1,66 @@
+{{ > partials/header }}
+
+<div class="ui container" style="margin-top: 20px;">
+    
+    {{#owner}}
+        <h1>Profils de {{firstname}} {{lastname}}</h1>
+        <a href="/users" class="ui button basic mb-4">
+            <i class="arrow left icon"></i> Retour aux utilisateurs
+        </a>
+    {{/owner}}
+    
+    {{^owner}}
+        <h1>Tous les profils</h1>
+    {{/owner}}
+
+    {{#owner}}
+    <div class="ui segment secondary">
+        <h4>Créer un nouveau profil</h4>
+        <form class="ui form" method="post" action="/profiles/user/{{id}}/create">
+            <div class="fields">
+                <div class="twelve wide field">
+                    <input type="text" name="name" placeholder="Nom du profil (ex: Développeur Fullstack, Stage...)" required>
+                </div>
+                <div class="four wide field">
+                    <button type="submit" class="ui green button fluid">
+                        <i class="plus icon"></i> Créer
+                    </button>
+                </div>
+            </div>
+        </form>
+    </div>
+    {{/owner}}
+
+    <table class="ui celled table">
+        <thead>
+            <tr>
+                <th>Nom du profil</th>
+                <th>Description</th>
+                <th class="center aligned">Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {{#profiles}}
+            <tr>
+                <td>{{name}}</td>
+                <td>{{description}}</td>
+                <td class="center aligned">
+                    <a href="/profiles/{{id}}/edit" class="ui blue mini button">
+                        <i class="edit icon"></i> Gérer / Rubriques
+                    </a>
+                </td>
+            </tr>
+            {{/profiles}}
+            
+            {{^profiles}}
+            <tr>
+                <td colspan="3" class="center aligned">
+                    Aucun profil pour le moment. Utilisez le formulaire ci-dessus pour en créer un !
+                </td>
+            </tr>
+            {{/profiles}}
+        </tbody>
+    </table>
+</div>
+
+{{ > partials/footer }}

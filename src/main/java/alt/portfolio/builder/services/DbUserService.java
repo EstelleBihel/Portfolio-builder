@@ -1,3 +1,17 @@
+package alt.portfolio.builder.services;
+
+import java.util.Optional;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.stereotype.Service;
+
+import alt.portfolio.builder.entities.User;
+import alt.portfolio.builder.repositories.UserRepository;
+
 @Service
 public class DbUserService implements UserDetailsService {
 
@@ -9,7 +23,7 @@ public class DbUserService implements UserDetailsService {
 
 	@Override
 	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-		Optional<User> optUser = uRepo.findByUsername(username);
+		Optional<User> optUser = Optional.ofNullable(uRepo.findByUsername(username));
 		return optUser.orElseThrow(() -> new UsernameNotFoundException("Utilisateur inconnu"));
 	}
 
@@ -22,7 +36,7 @@ public class DbUserService implements UserDetailsService {
 		user.setUsername(username);
 		user.setFirstname(username);
 		user.setLastname(username);
-		user.setEmail(username + ".mail.fr");
+		user.setEmail(username);
 		user.setPassword(password);
 		encodePassword(user);
 		return uRepo.save(user);

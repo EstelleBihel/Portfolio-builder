@@ -11,12 +11,17 @@ import alt.portfolio.builder.entities.User;
 @Repository
 public interface UserRepository extends JpaRepository<User, UUID> {
 
-    User findByUsername(String username);
+	// public optional ser findByUsername(String username);
 
-    // Methode pour l'authentification (username OU email)
-    Optional<User> findByUsernameOrEmail(String username, String email);
+	// @Query ("select u from User u where u.email like :pattern")
+	// public List<User> searchBy(String pattern);
 
-    boolean existsByUsername(String username);
+	User findByUsername(String username);
 
-    boolean existsByEmail(String email);
+	// Methode pour l'authentification (username OU email)
+	Optional<User> findByUsernameOrEmail(String username, String email);
+
+	boolean existsByUsername(String username);
+
+	boolean existsByEmail(String email);
 }

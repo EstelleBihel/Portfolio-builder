@@ -1,71 +1,59 @@
 {{ > partials/header }}
 
-<h1>Users App</h1>
+<div class="ui container" style="margin-top: 20px;">
+    <h1>Gestion des Utilisateurs</h1>
 
-<a href="/users/create">Créer un nouvel utilisateur</a>
+    <a href="/users/create" class="ui green button">
+        <i class="plus icon"></i> Créer un nouvel utilisateur
+    </a>
 
-<table class="ui celled table">
-  <thead>
-    <tr>
-      <th>Prénom</th>
-      <th>Nom</th>
-      <th>Nom d'utilisateur</th>
-      <th>Email</th>
-      <th></th>
-    </tr>
-  </thead>
-  <tbody>
-  {{#users}}
-    <tr>
-      <td>
-        <a href="/users/{{id}}">
-          {{firstname}}
-        </a>
-      </td>
-      <td>{{lastname}}</td>
-      <td>{{username}}</td>
-      <td>{{email}}</td>
-	  <td>
-        <!-- bouton Modifier -->
-        <a href="/users/{{id}}/edit">Modifier</a>
+    <table class="ui celled table" style="margin-top: 20px;">
+      <thead>
+        <tr>
+          <th>Prénom</th>
+          <th>Nom</th>
+          <th>Nom d'utilisateur</th>
+          <th>Email</th>
+          <th class="center aligned">Profils</th>
+          <th class="right aligned">Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+      {{#users}}
+        <tr>
+          <td><a href="/users/{{id}}">{{firstname}}</a></td>
+          <td>{{lastname}}</td>
+          <td>{{username}}</td>
+          <td>{{email}}</td>
+          
+          <td class="center aligned">
+            <a href="/profiles/user/{{id}}" class="ui mini teal button">
+              <i class="folder open icon"></i> Voir les profils
+            </a>
+          </td>
 
-        <!-- bouton Supprimer -->
-        <form method="post"
-              action="/users/{{id}}/delete"
-              style="display:inline"
-              onsubmit="return confirm('Supprimer cet utilisateur ?');">
-          <button type="submit">Supprimer</button>
-        </form>
-      </td>
-      <td class="right aligned">
-        <form method="post" action="/users/{{id}}/delete" style="display:inline">
-          <button class="ui red mini button" onclick="return confirm('Supprimer cet utilisateur ?')">
-            Supprimer
-          </button>
-        </form>
-      </td>
-    </tr>
-  {{/users}}
+          <td class="right aligned">
+            <div class="ui mini buttons">
+                <a href="/users/{{id}}/edit" class="ui button">Modifier</a>
+                <a href="/users/{{id}}/duplicate" class="ui button">Dupliquer</a>
+                <div class="or" data-text="ou"></div>
+                <form method="post" action="/users/{{id}}/delete" style="display:inline">
+                  <button type="submit" class="ui red button" onclick="return confirm('Supprimer ?')">Suppr.</button>
+                </form>
+            </div>
+          </td>
+        </tr>
+      {{/users}}
 
-  {{^users}}
-    <tr>
-      <td colspan="5" class="center aligned">
-        Aucun utilisateur trouvé.
-      </td>
-    </tr>
-  {{/users}}
-  </tbody>
-</table>
-
-{{#updatedUser}}
-<script>
-$.toast?.({
-  title: 'Ajout/modification',
-  message: 'L’utilisateur {{firstname}} {{lastname}} a été ajouté/modifié.',
-  classProgress: 'red',
-  showProgress: 'bottom'
-});
-</script>
-{{/updatedUser}}
+      {{^users}}
+        <tr>
+          <td colspan="6" class="center aligned">
+            Aucun utilisateur trouvé.
+          </td>
+        </tr>
+      {{/users}}
+      </tbody>
+    </table>
+</div>
 
 {{ > partials/footer }}

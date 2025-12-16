@@ -2,6 +2,8 @@
 
 package alt.portfolio.builder.controllers;
 
+import java.util.UUID;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
@@ -16,6 +18,7 @@ import org.springframework.web.servlet.view.RedirectView;
 
 import alt.portfolio.builder.dtos.UserRequestDto;
 import alt.portfolio.builder.entities.User;
+import alt.portfolio.builder.services.DbUserService;
 import alt.portfolio.builder.services.UserService;
 
 @Controller
@@ -25,23 +28,21 @@ public class UserController {
 	@Autowired
 	private UserService userService;
 	
-	@GetMapping(path = {"","/"})
-	@ResponseBody
-	public String index() {
-		return "ok";
-	}
+	@Autowired
+    private DbUserService dbUserService;
 	
+	//on recupere les info de user service on les passe a users et on les passe dans l'index
+    @GetMapping(path= {"","/"})
+    public ModelAndView index() {
+        return new ModelAndView("/users/index","users",userService.getUsers());
+    }
+	
+    // Creer un utilisateur via l'URL /users/register/{username}/{password}
 	@GetMapping("/register/{username}/{password}")
 	@ResponseBody
 	public User createUser(@PathVariable String username, @PathVariable String password) {
-		return UserService.createUser(username, password);
+		return dbUserService.createUser(username, password);
 	}
-	
-    // Afficher la liste des utilisateurs
-	//@GetMapping({"", "/"})
-	//public ModelAndView index() {
-	//	return new ModelAndView("users/index", "users", userService.getUsers());
-	//}
 
     // Afficher le formulaire de creation d'un utilisateur	
 	@GetMapping("/create")
@@ -57,23 +58,49 @@ public class UserController {
 		return new RedirectView("/users");
 	}
 	
+	// Afficher les details d'un utilisateur
 	@GetMapping("/{id}")
-	public ModelAndView show(@PathVariable String id) {
+	public ModelAndView show(@PathVariable UUID id) {
 	    User user = userService.getUserById(id);
 	    ModelAndView mv = new ModelAndView("users/show");
 	    mv.addObject("user", user);
 	    return mv;
 	}
-
-	@GetMapping("/{id}/delete")
-	public RedirectView deleteUser(@PathVariable String id) {
-		userService.deleteUser(id);
-		return new RedirectView("/users");
+	// Supprimer un utilisateur
+	@PostMapping("/{id}/delete")
+	public RedirectView deleteUser(@PathVariable UUID id) {
+	    userService.deleteUser(id);
+	    return new RedirectView("/users");
 	}
 	
+	// Mettre a jour/Modifier un utilisateur
+	@PostMapping("/{id}/edit")
+	public RedirectView updateUser(@PathVariable UUID id, @ModelAttribute UserRequestDto userRequest) {
+	    userService.updateUser(id, userRequest);
+	    return new RedirectView("/users");
+	}
+	
+	// Dupliquer un utilisateur
+	@GetMapping("/{id}/duplicate")
+	public ModelAndView duplicateUser(@PathVariable UUID id) {
+	    User original = userService.getUserById(id);
+	    
+	    User duplicate = new User();
+	    duplicate.setFirstname(original.getFirstname() + " (copie)");
+	    duplicate.setLastname(original.getLastname());
+	    duplicate.setUsername(original.getUsername() + "_copy");
+	    duplicate.setEmail("");
+	    
+	    ModelAndView mv = new ModelAndView("users/userForm");
+	    mv.addObject("user", duplicate);
+	    mv.addObject("isEdit", false);  // Duplication = création
+	    return mv;
+	}
+
+	// Afficher le formulaire d'edition d'un utilisateur
 	@GetMapping("/{id}/edit")
-	public ModelAndView editUser(@PathVariable String id) {
-	    User user = userService.getUserById(id);
+	public ModelAndView editUser(@PathVariable UUID id) {
+	    User user = userService.getUserById(id);  // Utilise getUserById au lieu de findById
 	    ModelAndView mv = new ModelAndView("users/userForm");
 	    mv.addObject("user", user);
 	    return mv;

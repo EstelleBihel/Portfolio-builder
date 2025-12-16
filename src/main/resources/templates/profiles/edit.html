@@ -1,0 +1,45 @@
+{{ > partials/header }}
+
+<div class="ui container" style="margin-top: 20px;">
+
+    <h2>Édition du profil : {{profile.name}}</h2>
+    
+    <div class="ui segments">
+        <div class="ui segment secondary">
+            <h3>Mes Rubriques</h3>
+        </div>
+        
+        {{#profile.rubrics}}
+        <div class="ui segment">
+            <div class="ui grid">
+                <div class="twelve wide column">
+                    <strong>{{name}}</strong> (Ordre: {{order}})
+                </div>
+                <div class="four wide column right aligned">
+                    <button class="ui mini button">Modifier</button>
+                </div>
+            </div>
+        </div>
+        {{/profile.rubrics}}
+        
+        {{^profile.rubrics}}
+        <div class="ui segment">
+            <p>Aucune rubrique pour l'instant.</p>
+        </div>
+        {{/profile.rubrics}}
+    </div>
+
+    <div class="ui segment blue">
+        <h4>Ajouter une rubrique</h4>
+        <form class="ui form" method="post" action="/profiles/{{profile.id}}/rubrics/add">
+            <div class="field">
+                <label>Nom de la rubrique</label>
+                <input type="text" name="name" placeholder="Ex: Expériences, Formation..." required>
+            </div>
+            <button type="submit" class="ui button primary">Ajouter</button>
+        </form>
+    </div>
+
+</div>
+
+{{ > partials/footer }}
