@@ -2,41 +2,51 @@
 
 <div class="ui container" style="margin-top: 20px;">
 
-    <h2>Édition du profil : {{profile.name}}</h2>
+    <h2>
+        <i class="user circle icon"></i> Édition du profil : {{profile.name}}
+    </h2>
+    <a href="/profiles/user/{{profile.owner.id}}" class="ui button basic">
+        <i class="arrow left icon"></i> Retour à la liste
+    </a>
     
-    <div class="ui segments">
+    <div class="ui segments" style="margin-top: 20px;">
         <div class="ui segment secondary">
             <h3>Mes Rubriques</h3>
         </div>
         
         {{#profile.rubrics}}
         <div class="ui segment">
-            <div class="ui grid">
+            <div class="ui grid middle aligned">
                 <div class="twelve wide column">
-                    <strong>{{name}}</strong> (Ordre: {{order}})
+                    <strong>{{name}}</strong> 
+                    <span class="ui label tiny basic">Ordre: {{displayOrder}}</span>
                 </div>
                 <div class="four wide column right aligned">
-                    <button class="ui mini button">Modifier</button>
+                    <a href="/rubrics/{{id}}/edit" class="ui mini blue button">
+                        <i class="edit icon"></i> Modifier
+                    </a>
                 </div>
             </div>
         </div>
         {{/profile.rubrics}}
         
         {{^profile.rubrics}}
-        <div class="ui segment">
+        <div class="ui segment center aligned">
             <p>Aucune rubrique pour l'instant.</p>
         </div>
         {{/profile.rubrics}}
     </div>
 
     <div class="ui segment blue">
-        <h4>Ajouter une rubrique</h4>
+        <h4><i class="plus icon"></i> Ajouter une rubrique</h4>
         <form class="ui form" method="post" action="/profiles/{{profile.id}}/rubrics/add">
             <div class="field">
                 <label>Nom de la rubrique</label>
-                <input type="text" name="name" placeholder="Ex: Expériences, Formation..." required>
+                <div class="ui action input">
+                    <input type="text" name="name" placeholder="Ex: Expériences, Formation, Loisirs..." required>
+                    <button type="submit" class="ui button primary">Ajouter</button>
+                </div>
             </div>
-            <button type="submit" class="ui button primary">Ajouter</button>
         </form>
     </div>
 

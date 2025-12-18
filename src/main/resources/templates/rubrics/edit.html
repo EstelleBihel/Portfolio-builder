@@ -1,0 +1,28 @@
+{{ > partials/header }}
+
+<div class="ui container" style="margin-top: 20px;">
+    <h1>Modifier la rubrique</h1>
+
+    <form class="ui form" method="post" action="/rubrics/{{rubric.id}}/edit">
+        
+        <div class="field">
+            <label>Nom de la rubrique</label>
+            <input type="text" name="name" value="{{rubric.name}}" required>
+        </div>
+
+        <div class="field">
+            <label>Ordre d'affichage (0 = premier, 10 = dernier...)</label>
+            <input type="number" name="displayOrder" value="{{rubric.displayOrder}}" required>
+        </div>
+
+        <button type="submit" class="ui green button">
+            <i class="save icon"></i> Enregistrer
+        </button>
+        
+        <a href="/profiles/{{rubric.profile.id}}/edit" class="ui button">
+            Annuler
+        </a>
+    </form>
+</div>
+
+{{ > partials/footer }}

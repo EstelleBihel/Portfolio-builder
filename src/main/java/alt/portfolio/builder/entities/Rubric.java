@@ -16,21 +16,19 @@ import lombok.ToString;
 @Data
 public class Rubric {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    private UUID idRubric;
+	@Id
+	@GeneratedValue(strategy = GenerationType.UUID)
+	private UUID id; // Renommé 'id' (plus simple pour le HTML)
 
-    private String name;
+	private String name;
 
-    @Column(name = "display_order")
-    private Integer order;
+	// CORRECTION : Le champ s'appelle displayOrder pour que Lombok génère
+	// setDisplayOrder()
+	@Column(name = "display_order")
+	private Integer displayOrder;
 
-    @ManyToOne(optional = false)
-    @JoinColumn(name = "profile_id")
-    @ToString.Exclude // Important pour éviter boucle infinie avec Lombok
-    private Profile profile;
-
-    public void setProfile(Profile profile) {
-        this.profile = profile;
-    }
+	@ManyToOne(optional = false)
+	@JoinColumn(name = "profile_id")
+	@ToString.Exclude
+	private Profile profile;
 }
