@@ -1,3 +1,72 @@
+</div> <!-- Fin main-content -->
+
+<!-- Footer -->
+<div class="ui inverted vertical footer segment" style="margin-top: 50px; padding: 40px 0;">
+    <div class="ui container">
+        <div class="ui stackable inverted divided equal height stackable grid">
+            <div class="five wide column">
+                <h4 class="ui inverted header">
+                    <i class="briefcase icon"></i> Portfolio Builder
+                </h4>
+                <p style="color: rgba(255,255,255,0.7);">
+                    Créez et gérez vos profils professionnels en ligne. 
+                    Exportez-les en CV ou en Portfolio web.
+                </p>
+            </div>
+            <div class="four wide column">
+                <h4 class="ui inverted header">Navigation</h4>
+                <div class="ui inverted link list">
+                    <a href="/" class="item"><i class="home icon"></i> Accueil</a>
+                    <a href="/about" class="item"><i class="info icon"></i> À propos</a>
+                    {{#activeUser}}
+                    <a href="/dashboard" class="item"><i class="dashboard icon"></i> Dashboard</a>
+                    <a href="/profiles/user/{{activeUser.id}}" class="item"><i class="folder icon"></i> Mes Profils</a>
+                    {{/activeUser}}
+                </div>
+            </div>
+            <div class="four wide column">
+                <h4 class="ui inverted header">Mon compte</h4>
+                <div class="ui inverted link list">
+                    {{#activeUser}}
+                    <a href="/users/{{activeUser.id}}" class="item"><i class="user icon"></i> Mon profil</a>
+                    <a href="/users/{{activeUser.id}}/edit" class="item"><i class="edit icon"></i> Paramètres</a>
+                    {{/activeUser}}
+                    {{^activeUser}}
+                    <a href="/login" class="item"><i class="sign in icon"></i> Connexion</a>
+                    <a href="/users/register" class="item"><i class="user plus icon"></i> Inscription</a>
+                    {{/activeUser}}
+                </div>
+            </div>
+            <div class="three wide column">
+                <h4 class="ui inverted header">Projet BTS SIO</h4>
+                <p style="color: rgba(255,255,255,0.7); font-size: 0.9em;">
+                    Développé avec Spring Boot, JPA et Mustache.
+                </p>
+                <p style="color: rgba(255,255,255,0.5); font-size: 0.8em;">
+                    © 2025 Portfolio Builder
+                </p>
+            </div>
+        </div>
+    </div>
 </div>
+
+<script>
+    // Initialisation des composants Fomantic UI
+    $(document).ready(function() {
+        // Dropdowns
+        $('.ui.dropdown').dropdown();
+        
+        // Messages qui disparaissent automatiquement
+        $('.message .close').on('click', function() {
+            $(this).closest('.message').transition('fade');
+        });
+        
+        // Auto-hide des messages après 5 secondes
+        setTimeout(function() {
+            $('.flash-message').transition('fade');
+        }, 5000);
+    });
+</script>
+
 </body>
 </html>
