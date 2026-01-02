@@ -20,11 +20,33 @@ import lombok.ToString;
 @Entity
 @Data
 public class Profile {
+
+	@Id
+	private UUID id = UUID.randomUUID();
+
+	@Column(length = 65)
+	private String name;
+
+	@Column(length = 10400)
+	private String description;
+
 	@Column(nullable = true)
 	private Boolean isPublished = false;
 
 	@Column(nullable = true, unique = true)
 	private String slug;
+
+	// CORRECTION : Pas de cascade sur la relation vers User
+	// On ne veut PAS supprimer l'utilisateur quand on supprime un profil !
+	@ManyToOne(optional = false, fetch = FetchType.LAZY)
+	private User owner;
+
+	// Les rubriques sont supprimees en cascade quand le profil est supprime
+	@OneToMany(mappedBy = "profile", cascade = CascadeType.ALL, orphanRemoval = true)
+	@ToString.Exclude
+	private List<Rubric> rubrics;
+
+	// Getters et Setters explicites (en plus de Lombok pour compatibilite)
 
 	public Boolean isPublished() {
 		return isPublished;
@@ -42,34 +64,16 @@ public class Profile {
 		this.slug = slug;
 	}
 
-	// Méthode utilitaire
-	public int getRubricsCount() {
-		return rubrics != null ? rubrics.size() : 0;
-	}
-
-	@Id
-	private UUID id = UUID.randomUUID();
-
-	@Column(length = 65)
-	private String name;
-
-	@Column(length = 10400)
-	private String description;
-
-	// cascadeType.REMOVE pour supprimer les profils lorsque l'utilisateur est
-	// supprimé
-	@ManyToOne(optional = false, cascade = CascadeType.REMOVE, fetch = FetchType.LAZY)
-	private User owner;
-
 	public void setOwner(User user) {
 		this.owner = user;
 	}
 
-	// "mappedBy = profile" signifie que c'est le champ 'profile' dans l'entité
-	// Rubric qui porte la clé étrangère.
-	// Ajout de la relation OneToMany vers Rubric => Cela indique que la relation
-	// est gérée par l'entité Rubric.
-	@OneToMany(mappedBy = "profile", cascade = CascadeType.ALL, orphanRemoval = true)
-	@ToString.Exclude // Important pour éviter boucle infinie
-	private List<Rubric> rubrics;
+	public User getOwner() {
+		return owner;
+	}
+
+	// Methode utilitaire
+	public int getRubricsCount() {
+		return rubrics != null ? rubrics.size() : 0;
+	}
 }

@@ -1,55 +1,315 @@
-{{ > partials/header }}
+{{> partials/header }}
+{{> partials/navbar }}
 
-<div class="ui container" style="margin-top: 20px;">
-
-    <h2>
-        <i class="user circle icon"></i> Édition du profil : {{profile.name}}
-    </h2>
-    <a href="/profiles/user/{{profile.owner.id}}" class="ui button basic">
-        <i class="arrow left icon"></i> Retour à la liste
-    </a>
-    
-    <div class="ui segments" style="margin-top: 20px;">
-        <div class="ui segment secondary">
-            <h3>Mes Rubriques</h3>
+<!-- En-tete de la page -->
+<div class="ui segment" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border: none; border-radius: 10px; margin-bottom: 30px;">
+    <div class="ui grid">
+        <div class="twelve wide column">
+            <h1 class="ui inverted header" style="margin-bottom: 5px;">
+                <i class="edit icon"></i>
+                Modifier le profil
+            </h1>
+            <p style="color: rgba(255,255,255,0.9); font-size: 1.1em;">
+                {{profile.name}}
+            </p>
         </div>
+        <div class="four wide column right aligned middle aligned">
+            <a href="/profiles/user/{{profile.owner.id}}" class="ui inverted button">
+                <i class="arrow left icon"></i> Retour
+            </a>
+        </div>
+    </div>
+</div>
+
+<!-- Message de succes -->
+{{#success}}
+<div class="ui positive message">
+    <i class="close icon"></i>
+    <div class="header">Succes !</div>
+    <p>{{success}}</p>
+</div>
+{{/success}}
+
+<!-- Message d'erreur -->
+{{#error}}
+<div class="ui negative message">
+    <i class="close icon"></i>
+    <div class="header">Erreur</div>
+    <p>{{error}}</p>
+</div>
+{{/error}}
+
+<div class="ui grid">
+    <!-- Colonne principale -->
+    <div class="ten wide column">
         
-        {{#profile.rubrics}}
+        <!-- Section Informations du profil -->
         <div class="ui segment">
-            <div class="ui grid middle aligned">
+            <h3 class="ui header">
+                <i class="info circle icon"></i>
+                Informations du profil
+            </h3>
+            <div class="ui divider"></div>
+            
+            <form class="ui form" action="/profiles/{{profile.id}}/update" method="POST">
+                <div class="field required">
+                    <label>Nom du profil</label>
+                    <input type="text" name="name" value="{{profile.name}}" required maxlength="65">
+                </div>
+                
+                <div class="field">
+                    <label>Description</label>
+                    <textarea name="description" rows="3" maxlength="500">{{profile.description}}</textarea>
+                </div>
+                
+                <div class="field">
+                    <label>Slug (URL publique)</label>
+                    <div class="ui labeled input" style="width: 100%;">
+                        <div class="ui label">/p/</div>
+                        <input type="text" name="slug" value="{{profile.slug}}" maxlength="100">
+                    </div>
+                </div>
+                
+                <div class="field">
+                    <div class="ui toggle checkbox">
+                        <input type="checkbox" name="isPublished" {{#profile.isPublished}}checked{{/profile.isPublished}}>
+                        <label><strong>Publier ce profil</strong></label>
+                    </div>
+                </div>
+                
+                <button type="submit" class="ui primary button">
+                    <i class="save icon"></i> Enregistrer
+                </button>
+            </form>
+        </div>
+
+        <!-- Section Rubriques -->
+        <div class="ui segment">
+            <div class="ui grid">
                 <div class="twelve wide column">
-                    <strong>{{name}}</strong> 
-                    <span class="ui label tiny basic">Ordre: {{displayOrder}}</span>
+                    <h3 class="ui header">
+                        <i class="th list icon"></i>
+                        Rubriques
+                    </h3>
                 </div>
                 <div class="four wide column right aligned">
-                    <a href="/rubrics/{{id}}/edit" class="ui mini blue button">
-                        <i class="edit icon"></i> Modifier
-                    </a>
+                    <button class="ui primary button" onclick="$('#addRubricModal').modal('show');">
+                        <i class="plus icon"></i> Ajouter
+                    </button>
                 </div>
             </div>
-        </div>
-        {{/profile.rubrics}}
-        
-        {{^profile.rubrics}}
-        <div class="ui segment center aligned">
-            <p>Aucune rubrique pour l'instant.</p>
-        </div>
-        {{/profile.rubrics}}
-    </div>
+            <div class="ui divider"></div>
 
-    <div class="ui segment blue">
-        <h4><i class="plus icon"></i> Ajouter une rubrique</h4>
-        <form class="ui form" method="post" action="/profiles/{{profile.id}}/rubrics/add">
-            <div class="field">
-                <label>Nom de la rubrique</label>
-                <div class="ui action input">
-                    <input type="text" name="name" placeholder="Ex: Expériences, Formation, Loisirs..." required>
-                    <button type="submit" class="ui button primary">Ajouter</button>
+            <!-- Liste des rubriques -->
+            {{#rubrics.size}}
+            <div class="ui segments">
+                {{#rubrics}}
+                <div class="ui segment rubric-item" data-visible="{{visible}}">
+                    <div class="ui grid">
+                        <div class="eight wide column">
+                            <h4 class="ui header" style="margin: 0;">
+                                <i class="folder icon rubric-icon"></i>
+                                {{name}}
+                                <div class="sub header">
+                                    <span class="ui tiny label">{{type}}</span>
+                                    <span class="ui tiny grey label hidden-label" style="display: none;">Masquee</span>
+                                </div>
+                            </h4>
+                        </div>
+                        <div class="eight wide column right aligned">
+                            <!-- Boutons de reordonnancement -->
+                            <form action="/rubrics/{{id}}/move-up" method="POST" style="display: inline;">
+                                <button type="submit" class="ui mini icon button" title="Monter">
+                                    <i class="arrow up icon"></i>
+                                </button>
+                            </form>
+                            <form action="/rubrics/{{id}}/move-down" method="POST" style="display: inline;">
+                                <button type="submit" class="ui mini icon button" title="Descendre">
+                                    <i class="arrow down icon"></i>
+                                </button>
+                            </form>
+                            
+                            <!-- Visibilite -->
+                            <form action="/rubrics/{{id}}/toggle-visibility" method="POST" style="display: inline;">
+                                <button type="submit" class="ui mini icon button" title="Changer visibilite">
+                                    <i class="eye icon visibility-icon"></i>
+                                </button>
+                            </form>
+                            
+                            <!-- Editer -->
+                            <a href="/rubrics/{{id}}/edit" class="ui mini blue icon button" title="Modifier">
+                                <i class="edit icon"></i>
+                            </a>
+                            
+                            <!-- Supprimer -->
+                            <button type="button" class="ui mini red icon button" title="Supprimer" onclick="confirmDeleteRubric('{{id}}', '{{name}}')">
+                                <i class="trash icon"></i>
+                            </button>
+                        </div>
+                    </div>
+                    {{#content}}
+                    <div class="ui divider"></div>
+                    <p style="color: #666; margin: 0;">{{content}}</p>
+                    {{/content}}
                 </div>
+                {{/rubrics}}
+            </div>
+            {{/rubrics.size}}
+
+            {{^rubrics}}
+            <div class="ui placeholder segment">
+                <div class="ui icon header">
+                    <i class="th list icon" style="color: #667eea;"></i>
+                    Aucune rubrique
+                </div>
+                <p style="color: #666;">Ajoutez des rubriques pour enrichir votre profil.</p>
+                <button class="ui primary button" onclick="$('#addRubricModal').modal('show');">
+                    <i class="plus icon"></i> Ajouter une rubrique
+                </button>
+            </div>
+            {{/rubrics}}
+        </div>
+    </div>
+    
+    <!-- Colonne laterale -->
+    <div class="six wide column">
+        <!-- Statut du profil -->
+        <div class="ui segment">
+            <h4 class="ui header">
+                <i class="flag icon"></i> Statut
+            </h4>
+            {{#profile.isPublished}}
+            <div class="ui green label"><i class="globe icon"></i> Publie</div>
+            {{/profile.isPublished}}
+            {{^profile.isPublished}}
+            <div class="ui grey label"><i class="eye slash icon"></i> Brouillon</div>
+            {{/profile.isPublished}}
+        </div>
+        
+        <!-- Actions -->
+        <div class="ui segment">
+            <h4 class="ui header">
+                <i class="lightning icon"></i> Actions
+            </h4>
+            <div class="ui vertical fluid buttons">
+                <a href="/profiles/{{profile.id}}/preview" class="ui button">
+                    <i class="eye icon"></i> Apercu
+                </a>
+                <button class="ui red button" onclick="$('#deleteProfileModal').modal('show');">
+                    <i class="trash icon"></i> Supprimer le profil
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Ajouter une rubrique -->
+<div class="ui small modal" id="addRubricModal">
+    <i class="close icon"></i>
+    <div class="header">
+        <i class="plus icon"></i> Ajouter une rubrique
+    </div>
+    <div class="content">
+        <form class="ui form" id="addRubricForm" action="/profiles/{{profile.id}}/rubrics/add" method="POST">
+            <div class="field required">
+                <label>Nom de la rubrique</label>
+                <input type="text" name="name" placeholder="Ex: Formation, Experience..." required maxlength="100">
+            </div>
+            <div class="field">
+                <label>Type</label>
+                <select name="type" class="ui dropdown">
+                    <option value="FORMATION">Formation</option>
+                    <option value="EXPERIENCE">Experience professionnelle</option>
+                    <option value="COMPETENCE">Competences</option>
+                    <option value="PROJET">Projets</option>
+                    <option value="LANGUE">Langues</option>
+                    <option value="LOISIR">Loisirs / Interets</option>
+                    <option value="AUTRE" selected>Autre</option>
+                </select>
+            </div>
+            <div class="field">
+                <label>Contenu (optionnel)</label>
+                <textarea name="content" rows="3" placeholder="Decrivez le contenu de cette rubrique..."></textarea>
             </div>
         </form>
     </div>
-
+    <div class="actions">
+        <div class="ui cancel button">Annuler</div>
+        <button type="submit" form="addRubricForm" class="ui positive button">
+            <i class="check icon"></i> Ajouter
+        </button>
+    </div>
 </div>
 
-{{ > partials/footer }}
+<!-- Modal Supprimer le profil -->
+<div class="ui small modal" id="deleteProfileModal">
+    <i class="close icon"></i>
+    <div class="header"><i class="trash icon"></i> Supprimer le profil</div>
+    <div class="content">
+        <p>Etes-vous sur de vouloir supprimer <strong>"{{profile.name}}"</strong> ?</p>
+        <div class="ui warning message">
+            <i class="exclamation triangle icon"></i>
+            Cette action est irreversible.
+        </div>
+    </div>
+    <div class="actions">
+        <div class="ui cancel button">Annuler</div>
+        <form action="/profiles/{{profile.id}}/delete" method="POST" style="display: inline;">
+            <button type="submit" class="ui negative button">
+                <i class="trash icon"></i> Supprimer
+            </button>
+        </form>
+    </div>
+</div>
+
+<!-- Modal Supprimer une rubrique -->
+<div class="ui small modal" id="deleteRubricModal">
+    <i class="close icon"></i>
+    <div class="header"><i class="trash icon"></i> Supprimer la rubrique</div>
+    <div class="content">
+        <p>Etes-vous sur de vouloir supprimer la rubrique <strong id="rubricNameToDelete"></strong> ?</p>
+    </div>
+    <div class="actions">
+        <div class="ui cancel button">Annuler</div>
+        <form id="deleteRubricForm" action="" method="POST" style="display: inline;">
+            <button type="submit" class="ui negative button">
+                <i class="trash icon"></i> Supprimer
+            </button>
+        </form>
+    </div>
+</div>
+
+<script>
+$(document).ready(function() {
+    $('.ui.checkbox').checkbox();
+    $('.ui.dropdown').dropdown();
+    $('#addRubricModal').modal({ closable: true });
+    $('#deleteProfileModal').modal({ closable: true });
+    $('#deleteRubricModal').modal({ closable: true });
+    
+    $('.message .close').on('click', function() {
+        $(this).closest('.message').transition('fade');
+    });
+    
+    // Gerer l'affichage des rubriques masquees via JavaScript
+    $('.rubric-item').each(function() {
+        var isVisible = $(this).data('visible');
+        if (isVisible === false || isVisible === 'false') {
+            $(this).css({'opacity': '0.6', 'background': '#f9f9f9'});
+            $(this).find('.rubric-icon').removeClass('folder').addClass('folder outline').css('color', '#999');
+            $(this).find('.hidden-label').show();
+            $(this).find('.visibility-icon').removeClass('eye').addClass('eye slash');
+        } else {
+            $(this).find('.rubric-icon').css('color', '#667eea');
+        }
+    });
+});
+
+function confirmDeleteRubric(id, name) {
+    $('#rubricNameToDelete').text('"' + name + '"');
+    $('#deleteRubricForm').attr('action', '/rubrics/' + id + '/delete');
+    $('#deleteRubricModal').modal('show');
+}
+</script>
+
+{{> partials/footer }}

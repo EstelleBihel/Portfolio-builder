@@ -1,68 +1,78 @@
 {{> partials/header }}
-
 {{> partials/navbar }}
 
-<!-- En-tête de la page -->
+<!-- En-tete de la page -->
 <div class="ui segment" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border: none; border-radius: 10px; margin-bottom: 30px;">
     <div class="ui grid">
         <div class="twelve wide column">
             <h1 class="ui inverted header" style="margin-bottom: 5px;">
                 <i class="folder icon"></i>
-                {{#owner}}
-                    Profils de {{owner.firstname}} {{owner.lastname}}
-                {{/owner}}
-                {{^owner}}
-                    Mes Profils
-                {{/owner}}
+                Mes Profils
             </h1>
             <p style="color: rgba(255,255,255,0.9); font-size: 1.1em;">
-                Gérez vos profils professionnels : CV, Portfolio, etc.
+                Gerez vos profils professionnels : CV, Portfolio, etc.
             </p>
         </div>
         <div class="four wide column right aligned middle aligned">
-            {{#owner}}
-            <button class="ui inverted button" onclick="document.getElementById('create-profile-modal').classList.add('active');">
+            <button class="ui inverted button" onclick="$('#createProfileModal').modal('show');">
                 <i class="plus icon"></i> Nouveau profil
             </button>
-            {{/owner}}
         </div>
     </div>
 </div>
+
+<!-- Message de succes (si present) -->
+{{#success}}
+<div class="ui positive message">
+    <i class="close icon"></i>
+    <div class="header">Succes !</div>
+    <p>{{success}}</p>
+</div>
+{{/success}}
+
+<!-- Message d'erreur (si present) -->
+{{#error}}
+<div class="ui negative message">
+    <i class="close icon"></i>
+    <div class="header">Erreur</div>
+    <p>{{error}}</p>
+</div>
+{{/error}}
 
 <!-- Liste des profils -->
 {{#profiles.size}}
 <div class="ui three column stackable cards">
     {{#profiles}}
-    <div class="ui card">
+    <div class="card">
         <div class="content">
             <div class="header">
                 <i class="folder icon" style="color: #667eea;"></i>
                 {{name}}
             </div>
             <div class="meta">
-                {{#rubrics.size}}
-                    <span><i class="th list icon"></i> {{rubrics.size}} rubrique(s)</span>
-                {{/rubrics.size}}
-                {{^rubrics.size}}
-                    <span style="color: #999;"><i class="th list icon"></i> Aucune rubrique</span>
-                {{/rubrics.size}}
+                {{#isPublished}}
+                <span class="ui green tiny label"><i class="globe icon"></i> Publie</span>
+                {{/isPublished}}
+                {{^isPublished}}
+                <span class="ui grey tiny label"><i class="eye slash icon"></i> Brouillon</span>
+                {{/isPublished}}
             </div>
             <div class="description">
                 {{#description}}
-                    <p>{{description}}</p>
+                <p>{{description}}</p>
                 {{/description}}
                 {{^description}}
-                    <p style="color: #999; font-style: italic;">Aucune description</p>
+                <p style="color: #999; font-style: italic;">Aucune description</p>
                 {{/description}}
             </div>
         </div>
         <div class="extra content">
             <div class="ui two buttons">
                 <a href="/profiles/{{id}}/edit" class="ui basic blue button">
-                    <i class="edit icon"></i> Éditer
+                    <i class="edit icon"></i> Editer
                 </a>
                 <a href="/profiles/{{id}}/preview" class="ui basic green button">
-                    <i class="eye icon"></i> Aperçu
+                    <i class="eye icon"></i> Apercu
                 </a>
             </div>
         </div>
@@ -71,110 +81,64 @@
 </div>
 {{/profiles.size}}
 
-{{^profiles.size}}
+{{^profiles}}
 <!-- Message si aucun profil -->
 <div class="ui placeholder segment">
     <div class="ui icon header">
         <i class="folder open outline icon" style="color: #667eea;"></i>
-        Aucun profil pour le moment
+        Vous n'avez pas encore de profil
     </div>
     <p style="color: #666; margin-bottom: 20px;">
-        Créez votre premier profil professionnel pour mettre en valeur vos compétences.
+        Commencez par creer votre premier profil professionnel pour mettre en valeur vos competences.
     </p>
-    {{#owner}}
-    <button class="ui primary button" onclick="document.getElementById('create-profile-modal').classList.add('active');">
-        <i class="plus icon"></i> Créer mon premier profil
+    <button class="ui primary button" onclick="$('#createProfileModal').modal('show');">
+        <i class="plus icon"></i> Creer mon premier profil
     </button>
-    {{/owner}}
 </div>
-{{/profiles.size}}
+{{/profiles}}
 
-<!-- Modal de création de profil -->
-{{#owner}}
-<div class="ui modal" id="create-profile-modal">
-    <i class="close icon" onclick="document.getElementById('create-profile-modal').classList.remove('active');"></i>
+<!-- Modal de creation de profil -->
+<div class="ui small modal" id="createProfileModal">
+    <i class="close icon"></i>
     <div class="header">
-        <i class="folder plus icon" style="color: #667eea;"></i>
-        Créer un nouveau profil
+        <i class="folder plus icon"></i> Creer un nouveau profil
     </div>
     <div class="content">
-        <form class="ui form" action="/profiles/user/{{owner.id}}/create" method="POST">
-            <div class="field">
-                <label><i class="tag icon"></i> Nom du profil</label>
-                <input type="text" name="name" placeholder="Ex: Développeur Full-Stack, Chef de projet..." required>
-                <small style="color: #999;">Donnez un nom explicite à votre profil (ex: "Mon CV Développeur")</small>
+        <form class="ui form" id="createProfileForm" action="/profiles/user/{{owner.id}}/create" method="POST">
+            <div class="field required">
+                <label>Nom du profil</label>
+                <input type="text" name="name" placeholder="Ex: Mon CV Developpeur" required maxlength="65">
+                <small style="color: #999;">Donnez un nom explicite a votre profil (max 65 caracteres)</small>
             </div>
-            <div class="ui divider"></div>
-            <div class="actions" style="text-align: right;">
-                <button type="button" class="ui button" onclick="document.getElementById('create-profile-modal').classList.remove('active');">
-                    Annuler
-                </button>
-                <button type="submit" class="ui primary button">
-                    <i class="plus icon"></i> Créer le profil
-                </button>
+            <div class="field">
+                <label>Description</label>
+                <textarea name="description" rows="3" placeholder="Description optionnelle de ce profil..." maxlength="500"></textarea>
+                <small style="color: #999;">Decrivez l'objectif de ce profil (max 500 caracteres)</small>
             </div>
         </form>
     </div>
+    <div class="actions">
+        <div class="ui cancel button">
+            <i class="times icon"></i> Annuler
+        </div>
+        <button type="submit" form="createProfileForm" class="ui positive button">
+            <i class="check icon"></i> Creer le profil
+        </button>
+    </div>
 </div>
-{{/owner}}
 
-<!-- Bouton retour -->
-<div style="margin-top: 30px;">
-    <a href="/dashboard" class="ui labeled icon button">
-        <i class="arrow left icon"></i>
-        Retour au Dashboard
-    </a>
-</div>
-
-<style>
-    /* Style pour le modal */
-    .ui.modal.active {
-        display: block !important;
-        position: fixed;
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -50%);
-        z-index: 1001;
-        background: white;
-        border-radius: 10px;
-        box-shadow: 0 10px 40px rgba(0,0,0,0.3);
-        max-width: 500px;
-        width: 90%;
-    }
+<script>
+$(document).ready(function() {
+    // Initialiser le modal
+    $('#createProfileModal').modal({
+        closable: true
+    });
     
-    .ui.modal .header {
-        padding: 20px;
-        border-bottom: 1px solid #eee;
-        font-size: 1.3em;
-    }
-    
-    .ui.modal .content {
-        padding: 20px;
-    }
-    
-    .ui.modal .close.icon {
-        position: absolute;
-        top: 15px;
-        right: 15px;
-        cursor: pointer;
-        color: #999;
-    }
-    
-    .ui.modal .close.icon:hover {
-        color: #333;
-    }
-    
-    /* Overlay */
-    .ui.modal.active::before {
-        content: '';
-        position: fixed;
-        top: 0;
-        left: 0;
-        right: 0;
-        bottom: 0;
-        background: rgba(0,0,0,0.5);
-        z-index: -1;
-    }
-</style>
+    // Fermer les messages
+    $('.message .close').on('click', function() {
+        $(this).closest('.message').transition('fade');
+    });
+});
+</script>
 
 {{> partials/footer }}

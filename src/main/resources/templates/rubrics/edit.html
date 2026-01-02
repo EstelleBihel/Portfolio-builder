@@ -1,28 +1,177 @@
-{{ > partials/header }}
+{{> partials/header }}
+{{> partials/navbar }}
 
-<div class="ui container" style="margin-top: 20px;">
-    <h1>Modifier la rubrique</h1>
-
-    <form class="ui form" method="post" action="/rubrics/{{rubric.id}}/edit">
-        
-        <div class="field">
-            <label>Nom de la rubrique</label>
-            <input type="text" name="name" value="{{rubric.name}}" required>
+<!-- En-tete de la page -->
+<div class="ui segment" style="background: linear-gradient(135deg, #f2711c 0%, #ff9800 100%); border: none; border-radius: 10px; margin-bottom: 30px;">
+    <div class="ui grid">
+        <div class="twelve wide column">
+            <h1 class="ui inverted header" style="margin-bottom: 5px;">
+                <i class="edit icon"></i>
+                Modifier la rubrique
+            </h1>
+            <p style="color: rgba(255,255,255,0.9); font-size: 1.1em;">
+                {{rubric.name}} - {{profile.name}}
+            </p>
         </div>
-
-        <div class="field">
-            <label>Ordre d'affichage (0 = premier, 10 = dernier...)</label>
-            <input type="number" name="displayOrder" value="{{rubric.displayOrder}}" required>
+        <div class="four wide column right aligned middle aligned">
+            <a href="/profiles/{{profile.id}}/edit" class="ui inverted button">
+                <i class="arrow left icon"></i> Retour au profil
+            </a>
         </div>
-
-        <button type="submit" class="ui green button">
-            <i class="save icon"></i> Enregistrer
-        </button>
-        
-        <a href="/profiles/{{rubric.profile.id}}/edit" class="ui button">
-            Annuler
-        </a>
-    </form>
+    </div>
 </div>
 
-{{ > partials/footer }}
+<!-- Message de succes -->
+{{#success}}
+<div class="ui positive message">
+    <i class="close icon"></i>
+    <div class="header">Succes !</div>
+    <p>{{success}}</p>
+</div>
+{{/success}}
+
+<!-- Message d'erreur -->
+{{#error}}
+<div class="ui negative message">
+    <i class="close icon"></i>
+    <div class="header">Erreur</div>
+    <p>{{error}}</p>
+</div>
+{{/error}}
+
+<div class="ui grid">
+    <div class="ten wide column">
+        <div class="ui segment">
+            <h3 class="ui header">
+                <i class="th list icon"></i>
+                Informations de la rubrique
+            </h3>
+            <div class="ui divider"></div>
+            
+            <form class="ui form" action="/rubrics/{{rubric.id}}/update" method="POST">
+                <div class="field required">
+                    <label>Nom de la rubrique</label>
+                    <input type="text" name="name" value="{{rubric.name}}" required maxlength="100">
+                </div>
+                
+                <div class="field">
+                    <label>Type</label>
+                    <select name="type" class="ui dropdown">
+                        <option value="FORMATION" {{#rubric.typeFormation}}selected{{/rubric.typeFormation}}>Formation</option>
+                        <option value="EXPERIENCE" {{#rubric.typeExperience}}selected{{/rubric.typeExperience}}>Experience professionnelle</option>
+                        <option value="COMPETENCE" {{#rubric.typeCompetence}}selected{{/rubric.typeCompetence}}>Competences</option>
+                        <option value="PROJET" {{#rubric.typeProjet}}selected{{/rubric.typeProjet}}>Projets</option>
+                        <option value="LANGUE" {{#rubric.typeLangue}}selected{{/rubric.typeLangue}}>Langues</option>
+                        <option value="LOISIR" {{#rubric.typeLoisir}}selected{{/rubric.typeLoisir}}>Loisirs / Interets</option>
+                        <option value="AUTRE" {{#rubric.typeAutre}}selected{{/rubric.typeAutre}}>Autre</option>
+                    </select>
+                    <small style="color: #999;">Type actuel : {{rubric.type}}</small>
+                </div>
+                
+                <div class="field">
+                    <label>Contenu</label>
+                    <textarea name="content" rows="6" placeholder="Decrivez le contenu de cette rubrique...">{{rubric.content}}</textarea>
+                    <small style="color: #999;">Vous pouvez decrire vos formations, experiences, competences, etc.</small>
+                </div>
+                
+                <div class="field">
+                    <label>Ordre d'affichage</label>
+                    <input type="number" name="displayOrder" value="{{rubric.displayOrder}}" min="0">
+                    <small style="color: #999;">Les rubriques sont affichees par ordre croissant</small>
+                </div>
+                
+                <div class="ui divider"></div>
+                
+                <div class="ui buttons">
+                    <button type="submit" class="ui primary button">
+                        <i class="save icon"></i> Enregistrer
+                    </button>
+                    <a href="/profiles/{{profile.id}}/edit" class="ui button">
+                        Annuler
+                    </a>
+                </div>
+            </form>
+        </div>
+    </div>
+    
+    <div class="six wide column">
+        <!-- Actions -->
+        <div class="ui segment">
+            <h4 class="ui header">
+                <i class="lightning icon"></i> Actions
+            </h4>
+            <div class="ui vertical fluid buttons">
+                <form action="/rubrics/{{rubric.id}}/toggle-visibility" method="POST">
+                    <button type="submit" class="ui fluid button">
+                        {{#rubric.visible}}
+                        <i class="eye slash icon"></i> Masquer
+                        {{/rubric.visible}}
+                        {{^rubric.visible}}
+                        <i class="eye icon"></i> Rendre visible
+                        {{/rubric.visible}}
+                    </button>
+                </form>
+                <button class="ui fluid red button" onclick="$('#deleteModal').modal('show');">
+                    <i class="trash icon"></i> Supprimer
+                </button>
+            </div>
+        </div>
+        
+        <!-- Informations -->
+        <div class="ui segment">
+            <h4 class="ui header">
+                <i class="info icon"></i> Informations
+            </h4>
+            <div class="ui list">
+                <div class="item">
+                    <strong>Visibilite :</strong>
+                    {{#rubric.visible}}
+                    <span class="ui green tiny label">Visible</span>
+                    {{/rubric.visible}}
+                    {{^rubric.visible}}
+                    <span class="ui grey tiny label">Masquee</span>
+                    {{/rubric.visible}}
+                </div>
+                <div class="item">
+                    <strong>Ordre :</strong> {{rubric.displayOrder}}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal de suppression -->
+<div class="ui small modal" id="deleteModal">
+    <i class="close icon"></i>
+    <div class="header">
+        <i class="trash icon"></i> Supprimer la rubrique
+    </div>
+    <div class="content">
+        <p>Etes-vous sur de vouloir supprimer la rubrique <strong>"{{rubric.name}}"</strong> ?</p>
+        <div class="ui warning message">
+            <i class="exclamation triangle icon"></i>
+            Cette action est irreversible.
+        </div>
+    </div>
+    <div class="actions">
+        <div class="ui cancel button">Annuler</div>
+        <form action="/rubrics/{{rubric.id}}/delete" method="POST" style="display: inline;">
+            <button type="submit" class="ui negative button">
+                <i class="trash icon"></i> Supprimer
+            </button>
+        </form>
+    </div>
+</div>
+
+<script>
+$(document).ready(function() {
+    $('.ui.dropdown').dropdown();
+    $('#deleteModal').modal({ closable: true });
+    
+    $('.message .close').on('click', function() {
+        $(this).closest('.message').transition('fade');
+    });
+});
+</script>
+
+{{> partials/footer }}

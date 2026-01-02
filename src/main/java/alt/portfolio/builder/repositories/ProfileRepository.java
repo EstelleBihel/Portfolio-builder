@@ -8,15 +8,34 @@ import org.springframework.stereotype.Repository;
 
 import alt.portfolio.builder.entities.Profile;
 
+/**
+ * Repository pour l'acces aux donnees des profils
+ */
 @Repository
 public interface ProfileRepository extends JpaRepository<Profile, UUID> {
 
-	public Profile findProfileById(UUID id);
+	/**
+	 * Trouver tous les profils d'un utilisateur
+	 */
+	List<Profile> findByOwnerId(UUID ownerId);
 
-	// Requête pour récupérer les profils avec leurs propriétaires en une seule
-	// @Query("select p from Profile p join fetch p.owner o where o.id = :owner_id")
+	/**
+	 * Trouver un profil par son slug
+	 */
+	Profile findBySlug(String slug);
 
-	// Méthode pour lister les profils d'un utilisateur (US-007)
+	/**
+	 * Compter les profils d'un utilisateur
+	 */
+	long countByOwnerId(UUID ownerId);
 
-	List<Profile> findByOwner_Id(UUID ownerId);
+	/**
+	 * Compter les profils publies d'un utilisateur
+	 */
+	long countByOwnerIdAndIsPublishedTrue(UUID ownerId);
+
+	/**
+	 * Trouver les profils publies d'un utilisateur
+	 */
+	List<Profile> findByOwnerIdAndIsPublishedTrue(UUID ownerId);
 }

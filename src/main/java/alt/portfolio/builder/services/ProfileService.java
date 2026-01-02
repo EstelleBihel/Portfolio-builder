@@ -5,39 +5,85 @@ import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import alt.portfolio.builder.entities.Profile;
 import alt.portfolio.builder.repositories.ProfileRepository;
 
+/**
+ * Service pour la gestion des profils
+ */
 @Service
 public class ProfileService {
 
 	@Autowired
 	private ProfileRepository profileRepository;
 
-	// Récupérer tous les profils (pour la liste)
+	/**
+	 * Recuperer tous les profils
+	 */
 	public List<Profile> getAllProfiles() {
 		return profileRepository.findAll();
 	}
 
-	// Récupérer les profils d'un utilisateur spécifique
-	public List<Profile> getProfilesByUser(UUID userId) {
-		return profileRepository.findByOwner_Id(userId);
-	}
-
-	// Récupérer un profil par son ID (pour l'édition)
+	/**
+	 * Recuperer un profil par son ID
+	 */
 	public Profile getProfileById(UUID id) {
-		return profileRepository.findById(id)
-				.orElseThrow(() -> new IllegalArgumentException("Profil introuvable avec l'ID : " + id));
+		return profileRepository.findById(id).orElse(null);
 	}
 
-	// Sauvegarder ou mettre à jour un profil
-	public void saveProfile(Profile profile) {
-		profileRepository.save(profile);
+	/**
+	 * Recuperer les profils d'un utilisateur
+	 */
+	public List<Profile> getProfilesByUser(UUID userId) {
+		return profileRepository.findByOwnerId(userId);
 	}
 
-	// Supprimer un profil
+	/**
+	 * Sauvegarder un profil (creation ou mise a jour)
+	 */
+	public Profile saveProfile(Profile profile) {
+		return profileRepository.save(profile);
+	}
+
+	/**
+	 * Supprimer un profil par son ID La suppression en cascade des rubriques est
+	 * geree par JPA (CascadeType.ALL + orphanRemoval)
+	 */
+	@Transactional
 	public void deleteProfile(UUID id) {
-		profileRepository.deleteById(id);
+		Profile profile = profileRepository.findById(id).orElse(null);
+		if (profile != null) {
+			profileRepository.delete(profile);
+		}
+	}
+
+	/**
+	 * Verifier si un slug existe deja
+	 */
+	public boolean slugExists(String slug) {
+		return profileRepository.findBySlug(slug) != null;
+	}
+
+	/**
+	 * Recuperer un profil par son slug
+	 */
+	public Profile getProfileBySlug(String slug) {
+		return profileRepository.findBySlug(slug);
+	}
+
+	/**
+	 * Compter les profils d'un utilisateur
+	 */
+	public long countProfilesByUser(UUID userId) {
+		return profileRepository.countByOwnerId(userId);
+	}
+
+	/**
+	 * Compter les profils publies d'un utilisateur
+	 */
+	public long countPublishedProfilesByUser(UUID userId) {
+		return profileRepository.countByOwnerIdAndIsPublishedTrue(userId);
 	}
 }

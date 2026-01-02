@@ -3,49 +3,260 @@ package alt.portfolio.builder.controllers;
 import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import alt.portfolio.builder.entities.Profile;
 import alt.portfolio.builder.entities.Rubric;
+import alt.portfolio.builder.entities.User;
+import alt.portfolio.builder.services.ProfileService;
 import alt.portfolio.builder.services.RubricService;
 
+/**
+ * Controleur pour la gestion des rubriques US-012 : Ajouter une rubrique US-013
+ * : Modifier une rubrique US-014 : Supprimer une rubrique US-015 : Reorganiser
+ * les rubriques US-016 : Rendre une rubrique visible/invisible
+ */
 @Controller
 public class RubricController {
 
 	@Autowired
 	private RubricService rubricService;
 
-	// Ajouter une rubrique
+	@Autowired
+	private ProfileService profileService;
+
+	/**
+	 * US-012 : Ajouter une rubrique a un profil POST
+	 * /profiles/{profileId}/rubrics/add
+	 */
 	@PostMapping("/profiles/{profileId}/rubrics/add")
-	public String addRubric(@PathVariable UUID profileId, @RequestParam String name) {
-		rubricService.createRubric(profileId, name);
+	public String addRubric(@PathVariable UUID profileId, @RequestParam String name,
+			@RequestParam(required = false) String type, @RequestParam(required = false) String content,
+			Authentication auth, RedirectAttributes redirectAttributes) {
+
+		// Verifier que le profil existe et appartient a l'utilisateur
+		Profile profile = profileService.getProfileById(profileId);
+		if (profile == null) {
+			redirectAttributes.addFlashAttribute("error", "Profil introuvable.");
+			return "redirect:/dashboard";
+		}
+
+		User currentUser = (User) auth.getPrincipal();
+		if (!profile.getOwner().getId().equals(currentUser.getId())) {
+			redirectAttributes.addFlashAttribute("error", "Vous n'avez pas le droit de modifier ce profil.");
+			return "redirect:/profiles/user/" + currentUser.getId();
+		}
+
+		// Validation du nom
+		if (name == null || name.trim().isEmpty()) {
+			redirectAttributes.addFlashAttribute("error", "Le nom de la rubrique est obligatoire.");
+			return "redirect:/profiles/" + profileId + "/edit";
+		}
+
+		name = name.trim();
+		if (name.length() > 100) {
+			name = name.substring(0, 100);
+		}
+
+		// Type par defaut
+		if (type == null || type.trim().isEmpty()) {
+			type = "AUTRE";
+		}
+
+		try {
+			rubricService.createRubric(profileId, name, type, content);
+			redirectAttributes.addFlashAttribute("success", "La rubrique \"" + name + "\" a ete ajoutee.");
+		} catch (Exception e) {
+			redirectAttributes.addFlashAttribute("error", "Erreur lors de l'ajout : " + e.getMessage());
+		}
+
 		return "redirect:/profiles/" + profileId + "/edit";
 	}
 
-	// Afficher le formulaire de modification (GET)
+	/**
+	 * US-013 : Afficher le formulaire de modification d'une rubrique GET
+	 * /rubrics/{id}/edit
+	 */
 	@GetMapping("/rubrics/{id}/edit")
-	public ModelAndView editRubricForm(@PathVariable UUID id) {
+	public ModelAndView editRubricForm(@PathVariable UUID id, Authentication auth) {
 		Rubric rubric = rubricService.getRubricById(id);
-		return new ModelAndView("rubrics/edit", "rubric", rubric);
+
+		if (rubric == null) {
+			return new ModelAndView("redirect:/dashboard");
+		}
+
+		// Verifier que l'utilisateur est proprietaire du profil
+		User currentUser = (User) auth.getPrincipal();
+		if (!rubric.getProfile().getOwner().getId().equals(currentUser.getId())) {
+			return new ModelAndView("redirect:/profiles/user/" + currentUser.getId());
+		}
+
+		ModelAndView mv = new ModelAndView("rubrics/edit");
+		mv.addObject("rubric", rubric);
+		mv.addObject("profile", rubric.getProfile());
+		return mv;
 	}
 
-	// Enregistrer la modification (POST)
-	// CORRECTION ICI : Ajout du préfixe "/rubrics" pour correspondre au formulaire
-	@PostMapping("/rubrics/{id}/edit")
-	public String updateRubric(@PathVariable UUID id, @RequestParam String name, @RequestParam Integer displayOrder) {
+	/**
+	 * US-013 : Enregistrer la modification d'une rubrique POST /rubrics/{id}/update
+	 */
+	@PostMapping("/rubrics/{id}/update")
+	public String updateRubric(@PathVariable UUID id, @RequestParam String name,
+			@RequestParam(required = false) String type, @RequestParam(required = false) String content,
+			@RequestParam(required = false) Integer displayOrder, Authentication auth,
+			RedirectAttributes redirectAttributes) {
 
 		Rubric rubric = rubricService.getRubricById(id);
 
-		rubric.setName(name);
-		rubric.setDisplayOrder(displayOrder);
+		if (rubric == null) {
+			redirectAttributes.addFlashAttribute("error", "Rubrique introuvable.");
+			return "redirect:/dashboard";
+		}
 
-		rubricService.saveRubric(rubric);
+		// Verifier que l'utilisateur est proprietaire
+		User currentUser = (User) auth.getPrincipal();
+		if (!rubric.getProfile().getOwner().getId().equals(currentUser.getId())) {
+			redirectAttributes.addFlashAttribute("error", "Vous n'avez pas le droit de modifier cette rubrique.");
+			return "redirect:/profiles/user/" + currentUser.getId();
+		}
 
-		// Retour au profil parent
+		// Validation
+		if (name == null || name.trim().isEmpty()) {
+			redirectAttributes.addFlashAttribute("error", "Le nom de la rubrique est obligatoire.");
+			return "redirect:/rubrics/" + id + "/edit";
+		}
+
+		name = name.trim();
+		if (name.length() > 100) {
+			name = name.substring(0, 100);
+		}
+
+		try {
+			rubric.setName(name);
+			if (type != null && !type.trim().isEmpty()) {
+				rubric.setType(type);
+			}
+			if (content != null) {
+				rubric.setContent(content.trim());
+			}
+			if (displayOrder != null) {
+				rubric.setDisplayOrder(displayOrder);
+			}
+
+			rubricService.saveRubric(rubric);
+			redirectAttributes.addFlashAttribute("success", "La rubrique a ete mise a jour.");
+		} catch (Exception e) {
+			redirectAttributes.addFlashAttribute("error", "Erreur lors de la mise a jour : " + e.getMessage());
+		}
+
+		return "redirect:/profiles/" + rubric.getProfile().getId() + "/edit";
+	}
+
+	/**
+	 * US-014 : Supprimer une rubrique POST /rubrics/{id}/delete
+	 */
+	@PostMapping("/rubrics/{id}/delete")
+	public String deleteRubric(@PathVariable UUID id, Authentication auth, RedirectAttributes redirectAttributes) {
+
+		Rubric rubric = rubricService.getRubricById(id);
+
+		if (rubric == null) {
+			redirectAttributes.addFlashAttribute("error", "Rubrique introuvable.");
+			return "redirect:/dashboard";
+		}
+
+		// Verifier que l'utilisateur est proprietaire
+		User currentUser = (User) auth.getPrincipal();
+		if (!rubric.getProfile().getOwner().getId().equals(currentUser.getId())) {
+			redirectAttributes.addFlashAttribute("error", "Vous n'avez pas le droit de supprimer cette rubrique.");
+			return "redirect:/profiles/user/" + currentUser.getId();
+		}
+
+		UUID profileId = rubric.getProfile().getId();
+		String rubricName = rubric.getName();
+
+		try {
+			rubricService.deleteRubric(id);
+			redirectAttributes.addFlashAttribute("success", "La rubrique \"" + rubricName + "\" a ete supprimee.");
+		} catch (Exception e) {
+			redirectAttributes.addFlashAttribute("error", "Erreur lors de la suppression : " + e.getMessage());
+		}
+
+		return "redirect:/profiles/" + profileId + "/edit";
+	}
+
+	/**
+	 * US-016 : Changer la visibilite d'une rubrique POST
+	 * /rubrics/{id}/toggle-visibility
+	 */
+	@PostMapping("/rubrics/{id}/toggle-visibility")
+	public String toggleVisibility(@PathVariable UUID id, Authentication auth, RedirectAttributes redirectAttributes) {
+
+		Rubric rubric = rubricService.getRubricById(id);
+
+		if (rubric == null) {
+			redirectAttributes.addFlashAttribute("error", "Rubrique introuvable.");
+			return "redirect:/dashboard";
+		}
+
+		User currentUser = (User) auth.getPrincipal();
+		if (!rubric.getProfile().getOwner().getId().equals(currentUser.getId())) {
+			return "redirect:/profiles/user/" + currentUser.getId();
+		}
+
+		try {
+			rubricService.toggleVisibility(id);
+			String status = rubric.getVisible() ? "masquee" : "visible";
+			redirectAttributes.addFlashAttribute("success", "La rubrique est maintenant " + status + ".");
+		} catch (Exception e) {
+			redirectAttributes.addFlashAttribute("error", "Erreur : " + e.getMessage());
+		}
+
+		return "redirect:/profiles/" + rubric.getProfile().getId() + "/edit";
+	}
+
+	/**
+	 * US-015 : Deplacer une rubrique vers le haut POST /rubrics/{id}/move-up
+	 */
+	@PostMapping("/rubrics/{id}/move-up")
+	public String moveUp(@PathVariable UUID id, Authentication auth) {
+		Rubric rubric = rubricService.getRubricById(id);
+		if (rubric == null) {
+			return "redirect:/dashboard";
+		}
+
+		User currentUser = (User) auth.getPrincipal();
+		if (!rubric.getProfile().getOwner().getId().equals(currentUser.getId())) {
+			return "redirect:/profiles/user/" + currentUser.getId();
+		}
+
+		rubricService.moveUp(id);
+		return "redirect:/profiles/" + rubric.getProfile().getId() + "/edit";
+	}
+
+	/**
+	 * US-015 : Deplacer une rubrique vers le bas POST /rubrics/{id}/move-down
+	 */
+	@PostMapping("/rubrics/{id}/move-down")
+	public String moveDown(@PathVariable UUID id, Authentication auth) {
+		Rubric rubric = rubricService.getRubricById(id);
+		if (rubric == null) {
+			return "redirect:/dashboard";
+		}
+
+		User currentUser = (User) auth.getPrincipal();
+		if (!rubric.getProfile().getOwner().getId().equals(currentUser.getId())) {
+			return "redirect:/profiles/user/" + currentUser.getId();
+		}
+
+		rubricService.moveDown(id);
 		return "redirect:/profiles/" + rubric.getProfile().getId() + "/edit";
 	}
 }
