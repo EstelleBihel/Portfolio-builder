@@ -1,66 +1,180 @@
-{{ > partials/header }}
+{{> partials/header }}
 
-<div class="ui container" style="margin-top: 20px;">
-    
-    {{#owner}}
-        <h1>Profils de {{firstname}} {{lastname}}</h1>
-        <a href="/users" class="ui button basic mb-4">
-            <i class="arrow left icon"></i> Retour aux utilisateurs
-        </a>
-    {{/owner}}
-    
-    {{^owner}}
-        <h1>Tous les profils</h1>
-    {{/owner}}
+{{> partials/navbar }}
 
+<!-- En-tête de la page -->
+<div class="ui segment" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border: none; border-radius: 10px; margin-bottom: 30px;">
+    <div class="ui grid">
+        <div class="twelve wide column">
+            <h1 class="ui inverted header" style="margin-bottom: 5px;">
+                <i class="folder icon"></i>
+                {{#owner}}
+                    Profils de {{owner.firstname}} {{owner.lastname}}
+                {{/owner}}
+                {{^owner}}
+                    Mes Profils
+                {{/owner}}
+            </h1>
+            <p style="color: rgba(255,255,255,0.9); font-size: 1.1em;">
+                Gérez vos profils professionnels : CV, Portfolio, etc.
+            </p>
+        </div>
+        <div class="four wide column right aligned middle aligned">
+            {{#owner}}
+            <button class="ui inverted button" onclick="document.getElementById('create-profile-modal').classList.add('active');">
+                <i class="plus icon"></i> Nouveau profil
+            </button>
+            {{/owner}}
+        </div>
+    </div>
+</div>
+
+<!-- Liste des profils -->
+{{#profiles.size}}
+<div class="ui three column stackable cards">
+    {{#profiles}}
+    <div class="ui card">
+        <div class="content">
+            <div class="header">
+                <i class="folder icon" style="color: #667eea;"></i>
+                {{name}}
+            </div>
+            <div class="meta">
+                {{#rubrics.size}}
+                    <span><i class="th list icon"></i> {{rubrics.size}} rubrique(s)</span>
+                {{/rubrics.size}}
+                {{^rubrics.size}}
+                    <span style="color: #999;"><i class="th list icon"></i> Aucune rubrique</span>
+                {{/rubrics.size}}
+            </div>
+            <div class="description">
+                {{#description}}
+                    <p>{{description}}</p>
+                {{/description}}
+                {{^description}}
+                    <p style="color: #999; font-style: italic;">Aucune description</p>
+                {{/description}}
+            </div>
+        </div>
+        <div class="extra content">
+            <div class="ui two buttons">
+                <a href="/profiles/{{id}}/edit" class="ui basic blue button">
+                    <i class="edit icon"></i> Éditer
+                </a>
+                <a href="/profiles/{{id}}/preview" class="ui basic green button">
+                    <i class="eye icon"></i> Aperçu
+                </a>
+            </div>
+        </div>
+    </div>
+    {{/profiles}}
+</div>
+{{/profiles.size}}
+
+{{^profiles.size}}
+<!-- Message si aucun profil -->
+<div class="ui placeholder segment">
+    <div class="ui icon header">
+        <i class="folder open outline icon" style="color: #667eea;"></i>
+        Aucun profil pour le moment
+    </div>
+    <p style="color: #666; margin-bottom: 20px;">
+        Créez votre premier profil professionnel pour mettre en valeur vos compétences.
+    </p>
     {{#owner}}
-    <div class="ui segment secondary">
-        <h4>Créer un nouveau profil</h4>
-        <form class="ui form" method="post" action="/profiles/user/{{id}}/create">
-            <div class="fields">
-                <div class="twelve wide field">
-                    <input type="text" name="name" placeholder="Nom du profil (ex: Développeur Fullstack, Stage...)" required>
-                </div>
-                <div class="four wide field">
-                    <button type="submit" class="ui green button fluid">
-                        <i class="plus icon"></i> Créer
-                    </button>
-                </div>
+    <button class="ui primary button" onclick="document.getElementById('create-profile-modal').classList.add('active');">
+        <i class="plus icon"></i> Créer mon premier profil
+    </button>
+    {{/owner}}
+</div>
+{{/profiles.size}}
+
+<!-- Modal de création de profil -->
+{{#owner}}
+<div class="ui modal" id="create-profile-modal">
+    <i class="close icon" onclick="document.getElementById('create-profile-modal').classList.remove('active');"></i>
+    <div class="header">
+        <i class="folder plus icon" style="color: #667eea;"></i>
+        Créer un nouveau profil
+    </div>
+    <div class="content">
+        <form class="ui form" action="/profiles/user/{{owner.id}}/create" method="POST">
+            <div class="field">
+                <label><i class="tag icon"></i> Nom du profil</label>
+                <input type="text" name="name" placeholder="Ex: Développeur Full-Stack, Chef de projet..." required>
+                <small style="color: #999;">Donnez un nom explicite à votre profil (ex: "Mon CV Développeur")</small>
+            </div>
+            <div class="ui divider"></div>
+            <div class="actions" style="text-align: right;">
+                <button type="button" class="ui button" onclick="document.getElementById('create-profile-modal').classList.remove('active');">
+                    Annuler
+                </button>
+                <button type="submit" class="ui primary button">
+                    <i class="plus icon"></i> Créer le profil
+                </button>
             </div>
         </form>
     </div>
-    {{/owner}}
+</div>
+{{/owner}}
 
-    <table class="ui celled table">
-        <thead>
-            <tr>
-                <th>Nom du profil</th>
-                <th>Description</th>
-                <th class="center aligned">Actions</th>
-            </tr>
-        </thead>
-        <tbody>
-            {{#profiles}}
-            <tr>
-                <td>{{name}}</td>
-                <td>{{description}}</td>
-                <td class="center aligned">
-                    <a href="/profiles/{{id}}/edit" class="ui blue mini button">
-                        <i class="edit icon"></i> Gérer / Rubriques
-                    </a>
-                </td>
-            </tr>
-            {{/profiles}}
-            
-            {{^profiles}}
-            <tr>
-                <td colspan="3" class="center aligned">
-                    Aucun profil pour le moment. Utilisez le formulaire ci-dessus pour en créer un !
-                </td>
-            </tr>
-            {{/profiles}}
-        </tbody>
-    </table>
+<!-- Bouton retour -->
+<div style="margin-top: 30px;">
+    <a href="/dashboard" class="ui labeled icon button">
+        <i class="arrow left icon"></i>
+        Retour au Dashboard
+    </a>
 </div>
 
-{{ > partials/footer }}
+<style>
+    /* Style pour le modal */
+    .ui.modal.active {
+        display: block !important;
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        z-index: 1001;
+        background: white;
+        border-radius: 10px;
+        box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+        max-width: 500px;
+        width: 90%;
+    }
+    
+    .ui.modal .header {
+        padding: 20px;
+        border-bottom: 1px solid #eee;
+        font-size: 1.3em;
+    }
+    
+    .ui.modal .content {
+        padding: 20px;
+    }
+    
+    .ui.modal .close.icon {
+        position: absolute;
+        top: 15px;
+        right: 15px;
+        cursor: pointer;
+        color: #999;
+    }
+    
+    .ui.modal .close.icon:hover {
+        color: #333;
+    }
+    
+    /* Overlay */
+    .ui.modal.active::before {
+        content: '';
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(0,0,0,0.5);
+        z-index: -1;
+    }
+</style>
+
+{{> partials/footer }}

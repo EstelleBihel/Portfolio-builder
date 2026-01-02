@@ -1,183 +1,93 @@
 {{> partials/header }}
+{{> partials/navbar }}
 
-<!-- Hero Section -->
-<div class="ui inverted vertical masthead center aligned segment" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); min-height: 500px; padding-top: 80px;">
-    
-    <!-- Menu de navigation -->
-    <div class="ui container">
-        <div class="ui large secondary inverted pointing menu">
-            <a class="active item" href="/">
-                <i class="home icon"></i> Accueil
-            </a>
-            <a class="item" href="/about">
-                <i class="info circle icon"></i> À propos
-            </a>
-            <div class="right item">
-                {{#isAuthenticated}}
-                    <a class="ui inverted button" href="/dashboard">
-                        <i class="dashboard icon"></i> Mon Dashboard
-                    </a>
-                    <form action="/logout" method="post" style="display: inline;">
-                        <button type="submit" class="ui inverted red button">
-                            <i class="sign out icon"></i> Déconnexion
-                        </button>
-                    </form>
-                {{/isAuthenticated}}
-                {{^isAuthenticated}}
-                    <a class="ui inverted button" href="/login">
-                        <i class="sign in icon"></i> Connexion
-                    </a>
-                    <a class="ui inverted orange button" href="/users/register">
-                        <i class="user plus icon"></i> Inscription
-                    </a>
-                {{/isAuthenticated}}
-            </div>
+<!-- En-tete du Dashboard -->
+<div class="ui segment" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border: none; border-radius: 10px; margin-bottom: 30px;">
+    <h1 class="ui inverted header">
+        <i class="dashboard icon"></i>
+        Bienvenue, {{user.firstname}} !
+    </h1>
+    <p style="color: rgba(255,255,255,0.9);">
+        Voici un apercu de votre activite sur Portfolio Builder.
+    </p>
+</div>
+
+<!-- Cartes statistiques -->
+<div class="ui three column stackable grid" style="margin-bottom: 30px;">
+    <div class="column">
+        <div class="ui segment" style="background: #667eea; color: white; text-align: center;">
+            <h1>{{profileCount}}</h1>
+            <p>Profils</p>
         </div>
     </div>
-    
-    <!-- Contenu Hero -->
-    <div class="ui text container" style="padding-top: 100px;">
-        <h1 class="ui inverted header" style="font-size: 3.5em; font-weight: 700;">
-            <i class="briefcase icon"></i>
-            Portfolio Builder
-        </h1>
-        <h2 style="color: rgba(255,255,255,0.9); font-weight: 300; font-size: 1.5em; margin-top: 20px;">
-            Créez et gérez vos profils professionnels en ligne.<br>
-            Exportez-les en CV ou en Portfolio web en quelques clics.
-        </h2>
-        <div style="margin-top: 40px;">
-            {{#isAuthenticated}}
-                <a href="/dashboard" class="ui huge orange button">
-                    <i class="rocket icon"></i> Accéder à mon Dashboard
-                </a>
-            {{/isAuthenticated}}
-            {{^isAuthenticated}}
-                <a href="/users/register" class="ui huge orange button">
-                    <i class="rocket icon"></i> Commencer gratuitement
-                </a>
-                <a href="/login" class="ui huge inverted button" style="margin-left: 15px;">
-                    <i class="sign in icon"></i> J'ai déjà un compte
-                </a>
-            {{/isAuthenticated}}
+    <div class="column">
+        <div class="ui segment" style="background: #f2711c; color: white; text-align: center;">
+            <h1>{{rubricCount}}</h1>
+            <p>Rubriques</p>
+        </div>
+    </div>
+    <div class="column">
+        <div class="ui segment" style="background: #21ba45; color: white; text-align: center;">
+            <h1>{{publishedCount}}</h1>
+            <p>Publies</p>
         </div>
     </div>
 </div>
 
-<!-- Section Fonctionnalités -->
-<div class="ui vertical segment" style="padding: 80px 0;">
-    <div class="ui container">
-        <h2 class="ui center aligned header" style="font-size: 2.2em; margin-bottom: 50px;">
-            <i class="star icon" style="color: #667eea;"></i>
-            Fonctionnalités principales
-        </h2>
-        
-        <div class="ui three column stackable grid">
-            <!-- Feature 1 -->
-            <div class="column">
-                <div class="ui raised segment center aligned" style="height: 100%; padding: 40px 25px;">
-                    <i class="huge user circle icon" style="color: #667eea;"></i>
-                    <h3 class="ui header" style="margin-top: 20px;">Profils multiples</h3>
-                    <p style="color: #666; font-size: 1.1em;">
-                        Créez plusieurs profils adaptés à vos différentes candidatures : 
-                        développeur, designer, chef de projet...
-                    </p>
-                </div>
-            </div>
-            
-            <!-- Feature 2 -->
-            <div class="column">
-                <div class="ui raised segment center aligned" style="height: 100%; padding: 40px 25px;">
-                    <i class="huge th list icon" style="color: #764ba2;"></i>
-                    <h3 class="ui header" style="margin-top: 20px;">Rubriques personnalisables</h3>
-                    <p style="color: #666; font-size: 1.1em;">
-                        Formations, expériences, compétences, projets... 
-                        Organisez vos rubriques comme vous le souhaitez.
-                    </p>
-                </div>
-            </div>
-            
-            <!-- Feature 3 -->
-            <div class="column">
-                <div class="ui raised segment center aligned" style="height: 100%; padding: 40px 25px;">
-                    <i class="huge eye icon" style="color: #f2711c;"></i>
-                    <h3 class="ui header" style="margin-top: 20px;">Double visualisation</h3>
-                    <p style="color: #666; font-size: 1.1em;">
-                        Exportez chaque profil en CV classique ou en Portfolio web 
-                        avec une URL publique unique.
-                    </p>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
+<!-- Section Mes Profils -->
+<h2 class="ui header">
+    <i class="folder icon"></i> Mes Profils
+</h2>
+<div class="ui divider"></div>
 
-<!-- Section Comment ça marche -->
-<div class="ui vertical segment" style="background-color: #f8f9fa; padding: 80px 0;">
-    <div class="ui container">
-        <h2 class="ui center aligned header" style="font-size: 2.2em; margin-bottom: 50px;">
-            <i class="cogs icon" style="color: #667eea;"></i>
-            Comment ça marche ?
-        </h2>
-        
-        <div class="ui four column stackable grid center aligned">
-            <!-- Step 1 -->
-            <div class="column">
-                <div class="ui circular segment" style="width: 100px; height: 100px; margin: 0 auto; background: #667eea;">
-                    <h2 style="color: white; line-height: 70px; font-size: 2em;">1</h2>
-                </div>
-                <h4 style="margin-top: 20px;">Créez votre compte</h4>
-                <p style="color: #666;">Inscription rapide et gratuite</p>
-            </div>
-            
-            <!-- Step 2 -->
-            <div class="column">
-                <div class="ui circular segment" style="width: 100px; height: 100px; margin: 0 auto; background: #764ba2;">
-                    <h2 style="color: white; line-height: 70px; font-size: 2em;">2</h2>
-                </div>
-                <h4 style="margin-top: 20px;">Créez un profil</h4>
-                <p style="color: #666;">Donnez-lui un nom adapté</p>
-            </div>
-            
-            <!-- Step 3 -->
-            <div class="column">
-                <div class="ui circular segment" style="width: 100px; height: 100px; margin: 0 auto; background: #f2711c;">
-                    <h2 style="color: white; line-height: 70px; font-size: 2em;">3</h2>
-                </div>
-                <h4 style="margin-top: 20px;">Ajoutez vos rubriques</h4>
-                <p style="color: #666;">Formations, expériences, projets...</p>
-            </div>
-            
-            <!-- Step 4 -->
-            <div class="column">
-                <div class="ui circular segment" style="width: 100px; height: 100px; margin: 0 auto; background: #21ba45;">
-                    <h2 style="color: white; line-height: 70px; font-size: 2em;">4</h2>
-                </div>
-                <h4 style="margin-top: 20px;">Publiez !</h4>
-                <p style="color: #666;">CV ou Portfolio, à vous de choisir</p>
-            </div>
-        </div>
-    </div>
+{{#profiles}}
+<div class="ui segment">
+    <h3>{{name}}</h3>
+    <p>{{description}}</p>
+    <a href="/profiles/{{id}}/edit" class="ui blue button">
+        <i class="edit icon"></i> Editer
+    </a>
 </div>
+{{/profiles}}
 
-<!-- Call to Action -->
-<div class="ui inverted vertical segment" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 60px 0;">
-    <div class="ui container center aligned">
-        <h2 class="ui inverted header" style="font-size: 2em;">
-            Prêt à créer votre portfolio professionnel ?
-        </h2>
-        <p style="color: rgba(255,255,255,0.9); font-size: 1.2em; margin-bottom: 30px;">
-            Rejoignez-nous et mettez en valeur vos compétences dès aujourd'hui.
-        </p>
-        {{^isAuthenticated}}
-            <a href="/users/register" class="ui huge orange button">
-                <i class="user plus icon"></i> Créer mon compte gratuitement
-            </a>
-        {{/isAuthenticated}}
-        {{#isAuthenticated}}
-            <a href="/dashboard" class="ui huge orange button">
-                <i class="dashboard icon"></i> Accéder à mon Dashboard
-            </a>
-        {{/isAuthenticated}}
+{{^profiles}}
+<div class="ui placeholder segment">
+    <div class="ui icon header">
+        <i class="folder open outline icon"></i>
+        Vous n'avez pas encore de profil
+    </div>
+    <a href="/profiles/user/{{user.id}}" class="ui primary button">
+        <i class="plus icon"></i> Creer mon premier profil
+    </a>
+</div>
+{{/profiles}}
+
+<!-- Actions rapides -->
+<h2 class="ui header" style="margin-top: 40px;">
+    <i class="lightning icon"></i> Actions rapides
+</h2>
+<div class="ui divider"></div>
+
+<div class="ui four column stackable grid">
+    <div class="column">
+        <a href="/profiles/user/{{user.id}}" class="ui fluid button">
+            <i class="plus icon"></i> Nouveau profil
+        </a>
+    </div>
+    <div class="column">
+        <a href="/users/{{user.id}}/edit" class="ui fluid button">
+            <i class="user edit icon"></i> Mon compte
+        </a>
+    </div>
+    <div class="column">
+        <a href="/users" class="ui fluid button">
+            <i class="users icon"></i> Utilisateurs
+        </a>
+    </div>
+    <div class="column">
+        <a href="/" class="ui fluid button">
+            <i class="home icon"></i> Accueil
+        </a>
     </div>
 </div>
 

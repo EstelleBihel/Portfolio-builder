@@ -1,0 +1,58 @@
+<!-- Navigation principale -->
+<div class="ui secondary pointing menu" style="margin-bottom: 30px; border-bottom: 2px solid #e0e0e0;">
+    
+    <a class="item {{#isHome}}active{{/isHome}}" href="/">
+        <i class="briefcase icon" style="color: #667eea;"></i>
+        <span style="font-weight: bold; color: #667eea;">Portfolio Builder</span>
+    </a>
+    
+    {{#activeUser}}
+    <a class="item {{#isDashboard}}active{{/isDashboard}}" href="/dashboard">
+        <i class="dashboard icon"></i> Dashboard
+    </a>
+    <a class="item {{#isProfiles}}active{{/isProfiles}}" href="/profiles/user/{{activeUser.id}}">
+        <i class="folder icon"></i> Mes Profils
+    </a>
+    <a class="item {{#isUsers}}active{{/isUsers}}" href="/users">
+        <i class="users icon"></i> Utilisateurs
+    </a>
+    
+    <div class="right menu">
+        <div class="ui dropdown item">
+            <i class="user circle icon"></i> {{activeUser.firstname}} {{activeUser.lastname}}
+            <i class="dropdown icon"></i>
+            <div class="menu">
+                <a class="item" href="/users/{{activeUser.id}}">
+                    <i class="id card icon"></i> Voir mon profil
+                </a>
+                <a class="item" href="/users/{{activeUser.id}}/edit">
+                    <i class="edit icon"></i> Modifier mes infos
+                </a>
+                <div class="divider"></div>
+                <a class="item" onclick="document.getElementById('logout-form').submit();">
+                    <i class="sign out icon" style="color: #db2828;"></i> 
+                    <span style="color: #db2828;">Deconnexion</span>
+                </a>
+            </div>
+        </div>
+    </div>
+    {{/activeUser}}
+    
+    {{^activeUser}}
+    <div class="right menu">
+        <a class="item" href="/login">
+            <i class="sign in icon"></i> Connexion
+        </a>
+        <a class="item" href="/users/register">
+            <i class="user plus icon" style="color: #f2711c;"></i> 
+            <span style="color: #f2711c; font-weight: bold;">Inscription</span>
+        </a>
+    </div>
+    {{/activeUser}}
+</div>
+
+{{#activeUser}}
+<form id="logout-form" action="/logout" method="POST" style="display: none;"></form>
+{{/activeUser}}
+
+<script>$(document).ready(function() { $('.ui.dropdown').dropdown(); });</script>

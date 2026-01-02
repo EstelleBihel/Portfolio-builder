@@ -20,6 +20,33 @@ import lombok.ToString;
 @Entity
 @Data
 public class Profile {
+	@Column(nullable = true)
+	private Boolean isPublished = false;
+
+	@Column(nullable = true, unique = true)
+	private String slug;
+
+	public Boolean isPublished() {
+		return isPublished;
+	}
+
+	public void setPublished(Boolean published) {
+		isPublished = published;
+	}
+
+	public String getSlug() {
+		return slug;
+	}
+
+	public void setSlug(String slug) {
+		this.slug = slug;
+	}
+
+	// Méthode utilitaire
+	public int getRubricsCount() {
+		return rubrics != null ? rubrics.size() : 0;
+	}
+
 	@Id
 	private UUID id = UUID.randomUUID();
 

@@ -1,0 +1,225 @@
+/* 
+ * Portfolio Builder - Styles personnalisés
+ * US-039 : Navigation et styles globaux
+ */
+
+/* ========== VARIABLES ========== */
+:root {
+    --primary-color: #667eea;
+    --primary-dark: #764ba2;
+    --secondary-color: #f2711c;
+    --success-color: #21ba45;
+    --danger-color: #db2828;
+    --text-color: #333;
+    --text-muted: #666;
+    --border-color: #e0e0e0;
+    --bg-light: #f8f9fa;
+}
+
+/* ========== GLOBAL ========== */
+body {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    color: var(--text-color);
+}
+
+.main-content {
+    flex: 1;
+}
+
+/* ========== NAVIGATION ========== */
+.main-navbar {
+    margin-bottom: 30px !important;
+    border-bottom: 2px solid var(--border-color) !important;
+}
+
+.main-navbar .item.active {
+    border-color: var(--primary-color) !important;
+    color: var(--primary-color) !important;
+    font-weight: 600;
+}
+
+.main-navbar .dropdown .menu {
+    min-width: 220px;
+}
+
+/* ========== BOUTONS ========== */
+.ui.button {
+    transition: all 0.2s ease;
+}
+
+.ui.button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.ui.primary.button,
+.ui.button.primary {
+    background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-dark) 100%);
+}
+
+.ui.primary.button:hover {
+    background: linear-gradient(135deg, var(--primary-dark) 0%, var(--primary-color) 100%);
+}
+
+/* ========== CARTES ========== */
+.ui.card,
+.ui.cards > .card {
+    transition: all 0.3s ease;
+    border-radius: 10px !important;
+    overflow: hidden;
+}
+
+.ui.card:hover,
+.ui.cards > .card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+}
+
+.ui.card > .content > .header {
+    color: var(--primary-color);
+}
+
+/* ========== SEGMENTS ========== */
+.ui.segment {
+    border-radius: 10px;
+}
+
+.ui.segment.gradient {
+    background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-dark) 100%);
+    border: none;
+}
+
+/* ========== TABLEAUX ========== */
+.ui.table thead th {
+    background: var(--bg-light);
+    color: var(--text-color);
+    font-weight: 600;
+}
+
+.ui.table tbody tr:hover {
+    background: rgba(102, 126, 234, 0.05);
+}
+
+/* ========== FORMULAIRES ========== */
+.ui.form .field > label {
+    color: var(--text-color);
+    font-weight: 600;
+}
+
+.ui.form input:focus,
+.ui.form textarea:focus {
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 2px rgba(102, 126, 234, 0.2);
+}
+
+/* ========== STATISTIQUES ========== */
+.ui.statistic > .value {
+    font-weight: 700;
+}
+
+.ui.inverted.statistic > .value {
+    color: white;
+}
+
+/* ========== MESSAGES FLASH ========== */
+.flash-message {
+    margin-bottom: 20px;
+    border-radius: 8px;
+}
+
+/* ========== PLACEHOLDERS ========== */
+.ui.placeholder.segment {
+    min-height: 200px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+/* ========== FOOTER ========== */
+.ui.footer.segment {
+    margin-top: auto !important;
+}
+
+/* ========== HÉROS SECTION ========== */
+.hero-gradient {
+    background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-dark) 100%);
+}
+
+/* ========== ANIMATIONS ========== */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.fade-in {
+    animation: fadeIn 0.5s ease-out;
+}
+
+/* ========== RESPONSIVE ========== */
+@media (max-width: 768px) {
+    .ui.container {
+        padding-left: 15px;
+        padding-right: 15px;
+    }
+    
+    .main-navbar {
+        flex-wrap: wrap;
+    }
+    
+    .main-navbar .right.menu {
+        margin-top: 10px;
+        width: 100%;
+        justify-content: flex-end;
+    }
+    
+    .ui.statistic > .value {
+        font-size: 2em !important;
+    }
+}
+
+/* ========== UTILITAIRES ========== */
+.text-primary {
+    color: var(--primary-color) !important;
+}
+
+.text-muted {
+    color: var(--text-muted) !important;
+}
+
+.bg-gradient {
+    background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-dark) 100%);
+}
+
+.rounded {
+    border-radius: 10px !important;
+}
+
+.shadow {
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+}
+
+.shadow-lg {
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.15);
+}
+
+/* ========== ICÔNES ========== */
+.icon.primary {
+    color: var(--primary-color) !important;
+}
+
+.icon.secondary {
+    color: var(--secondary-color) !important;
+}
+
+.icon.success {
+    color: var(--success-color) !important;
+}

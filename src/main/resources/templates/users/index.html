@@ -1,58 +1,89 @@
-{{ > partials/header }}
+{{> partials/header }}
 
-<div class="ui container" style="margin-top: 20px;">
-    <h1>Gestion des Utilisateurs</h1>
+{{> partials/navbar }}
 
-    <a href="/users/create" class="ui green button">
-        <i class="plus icon"></i> Créer un nouvel utilisateur
-    </a>
-
-    <table class="ui celled table" style="margin-top: 20px;">
-      <thead>
-        <tr>
-          <th>Prénom</th>
-          <th>Nom</th>
-          <th>Nom d'utilisateur</th>
-          <th>Email</th>
-          <th class="center aligned">Profils</th>
-          <th class="right aligned">Actions</th>
-        </tr>
-      </thead>
-      <tbody>
-      {{#users}}
-        <tr>
-          <td><a href="/users/{{id}}">{{firstname}}</a></td>
-          <td>{{lastname}}</td>
-          <td>{{username}}</td>
-          <td>{{email}}</td>
-          
-          <td class="center aligned">
-            <a href="/profiles/user/{{id}}" class="ui mini teal button">
-              <i class="folder open icon"></i> Voir les profils
+<!-- En-tête de la page -->
+<div class="ui segment" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border: none; border-radius: 10px; margin-bottom: 30px;">
+    <div class="ui grid">
+        <div class="twelve wide column">
+            <h1 class="ui inverted header" style="margin-bottom: 5px;">
+                <i class="users icon"></i>
+                Gestion des Utilisateurs
+            </h1>
+            <p style="color: rgba(255,255,255,0.9); font-size: 1.1em;">
+                Liste de tous les utilisateurs de la plateforme.
+            </p>
+        </div>
+        <div class="four wide column right aligned middle aligned">
+            <a href="/users/create" class="ui inverted button">
+                <i class="plus icon"></i> Créer un utilisateur
             </a>
-          </td>
-
-          <td class="right aligned">
-            <div class="ui mini buttons">
-                <a href="/users/{{id}}/edit" class="ui button">Modifier</a>
-                <a href="/users/{{id}}/duplicate" class="ui button">Dupliquer</a>
-                <form method="post" action="/users/{{id}}/delete" style="display:inline">
-                  <button type="submit" class="ui red button" onclick="return confirm('Supprimer ?')">Suppr.</button>
-                </form>
-            </div>
-          </td>
-        </tr>
-      {{/users}}
-
-      {{^users}}
-        <tr>
-          <td colspan="6" class="center aligned">
-            Aucun utilisateur trouvé.
-          </td>
-        </tr>
-      {{/users}}
-      </tbody>
-    </table>
+        </div>
+    </div>
 </div>
 
-{{ > partials/footer }}
+<!-- Tableau des utilisateurs -->
+<table class="ui celled striped table">
+    <thead>
+        <tr>
+            <th><i class="user icon"></i> Prénom</th>
+            <th>Nom</th>
+            <th>Nom d'utilisateur</th>
+            <th><i class="mail icon"></i> Email</th>
+            <th><i class="folder icon"></i> Profils</th>
+            <th class="center aligned">Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        {{#users}}
+        <tr>
+            <td>
+                <a href="/users/{{id}}" style="color: #667eea; font-weight: 500;">
+                    {{firstname}}
+                </a>
+            </td>
+            <td>{{lastname}}</td>
+            <td>{{username}}</td>
+            <td>{{email}}</td>
+            <td>
+                <a href="/profiles/user/{{id}}" class="ui small teal button">
+                    <i class="folder icon"></i> Voir les profils
+                </a>
+            </td>
+            <td class="center aligned">
+                <div class="ui small buttons">
+                    <a href="/users/{{id}}/edit" class="ui button">
+                        <i class="edit icon"></i> Modifier
+                    </a>
+                    <a href="/users/{{id}}/duplicate" class="ui button">
+                        <i class="copy icon"></i> Dupliquer
+                    </a>
+                    <form action="/users/{{id}}/delete" method="POST" style="display: inline;" 
+                          onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer cet utilisateur ?');">
+                        <button type="submit" class="ui red button">
+                            <i class="trash icon"></i> Suppr.
+                        </button>
+                    </form>
+                </div>
+            </td>
+        </tr>
+        {{/users}}
+        {{^users}}
+        <tr>
+            <td colspan="6" class="center aligned">
+                <div class="ui placeholder segment" style="border: none; box-shadow: none;">
+                    <div class="ui icon header">
+                        <i class="users icon" style="color: #ccc;"></i>
+                        Aucun utilisateur trouvé
+                    </div>
+                    <a href="/users/create" class="ui primary button">
+                        <i class="plus icon"></i> Créer le premier utilisateur
+                    </a>
+                </div>
+            </td>
+        </tr>
+        {{/users}}
+    </tbody>
+</table>
+
+{{> partials/footer }}

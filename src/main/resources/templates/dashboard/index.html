@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - Portfolio Builder</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fomantic-ui/2.9.4/semantic.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/fomantic-ui/2.9.4/semantic.min.js"></script>
+</head>
+<body>
+
+<div class="ui container" style="margin-top: 30px;">
+
+    <!-- Menu de navigation -->
+    <div class="ui secondary pointing menu">
+        <a class="item" href="/">
+            <i class="home icon"></i> Accueil
+        </a>
+        <a class="active item" href="/dashboard">
+            <i class="dashboard icon"></i> Dashboard
+        </a>
+        <a class="item" href="/profiles/user/{{user.id}}">
+            <i class="folder icon"></i> Mes Profils
+        </a>
+        <a class="item" href="/users">
+            <i class="users icon"></i> Utilisateurs
+        </a>
+        <div class="right menu">
+            <a class="item" href="/logout">
+                <i class="sign out icon"></i> Déconnexion
+            </a>
+        </div>
+    </div>
+
+    <!-- En-tête du Dashboard -->
+    <div class="ui segment" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border: none; border-radius: 10px; margin-bottom: 30px;">
+        <h1 class="ui inverted header">
+            <i class="dashboard icon"></i>
+            Bienvenue, {{user.firstname}} !
+        </h1>
+        <p style="color: rgba(255,255,255,0.9);">
+            Voici un aperçu de votre activité sur Portfolio Builder.
+        </p>
+    </div>
+
+    <!-- Cartes statistiques -->
+    <div class="ui three column stackable grid" style="margin-bottom: 30px;">
+        <div class="column">
+            <div class="ui segment" style="background: #667eea; color: white; text-align: center;">
+                <h1>{{profileCount}}</h1>
+                <p>Profils</p>
+            </div>
+        </div>
+        <div class="column">
+            <div class="ui segment" style="background: #f2711c; color: white; text-align: center;">
+                <h1>{{rubricCount}}</h1>
+                <p>Rubriques</p>
+            </div>
+        </div>
+        <div class="column">
+            <div class="ui segment" style="background: #21ba45; color: white; text-align: center;">
+                <h1>{{publishedCount}}</h1>
+                <p>Publiés</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Section Mes Profils -->
+    <h2 class="ui header">
+        <i class="folder icon"></i> Mes Profils
+    </h2>
+    <div class="ui divider"></div>
+
+    {{#profiles}}
+    <div class="ui segment">
+        <h3>{{name}}</h3>
+        <p>{{description}}</p>
+        <a href="/profiles/{{id}}/edit" class="ui blue button">
+            <i class="edit icon"></i> Éditer
+        </a>
+    </div>
+    {{/profiles}}
+
+    {{^profiles}}
+    <div class="ui placeholder segment">
+        <div class="ui icon header">
+            <i class="folder open outline icon"></i>
+            Vous n'avez pas encore de profil
+        </div>
+        <a href="/profiles/user/{{user.id}}" class="ui primary button">
+            <i class="plus icon"></i> Créer mon premier profil
+        </a>
+    </div>
+    {{/profiles}}
+
+    <!-- Actions rapides -->
+    <h2 class="ui header" style="margin-top: 40px;">
+        <i class="lightning icon"></i> Actions rapides
+    </h2>
+    <div class="ui divider"></div>
+
+    <div class="ui four column stackable grid">
+        <div class="column">
+            <a href="/profiles/user/{{user.id}}" class="ui fluid button">
+                <i class="plus icon"></i> Nouveau profil
+            </a>
+        </div>
+        <div class="column">
+            <a href="/users/{{user.id}}/edit" class="ui fluid button">
+                <i class="user edit icon"></i> Mon compte
+            </a>
+        </div>
+        <div class="column">
+            <a href="/users" class="ui fluid button">
+                <i class="users icon"></i> Utilisateurs
+            </a>
+        </div>
+        <div class="column">
+            <a href="/" class="ui fluid button">
+                <i class="home icon"></i> Accueil
+            </a>
+        </div>
+    </div>
+
+</div>
+
+</body>
+</html>
