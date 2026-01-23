@@ -1,94 +1,209 @@
 {{> partials/header }}
 {{> partials/navbar }}
 
-<!-- En-tete du Dashboard -->
-<div class="ui segment" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border: none; border-radius: 10px; margin-bottom: 30px;">
-    <h1 class="ui inverted header">
-        <i class="dashboard icon"></i>
-        Bienvenue, {{user.firstname}} !
-    </h1>
-    <p style="color: rgba(255,255,255,0.9);">
-        Voici un apercu de votre activite sur Portfolio Builder.
+<!-- Hero Section -->
+<div class="ui segment" style="
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border: none !important;
+    border-radius: 20px !important;
+    margin-bottom: 50px;
+    padding: 80px 50px;
+    text-align: center;
+    box-shadow: 0 20px 50px rgba(102, 126, 234, 0.3);
+    position: relative;
+    overflow: hidden;
+">
+    <!-- Decorations -->
+    <div style="
+        position: absolute;
+        top: -50px;
+        right: -50px;
+        width: 200px;
+        height: 200px;
+        background: rgba(255,255,255,0.1);
+        border-radius: 50%;
+    "></div>
+    <div style="
+        position: absolute;
+        bottom: -80px;
+        left: -80px;
+        width: 250px;
+        height: 250px;
+        background: rgba(255,255,255,0.05);
+        border-radius: 50%;
+    "></div>
+    
+    <div style="position: relative; z-index: 1;">
+        <div style="
+            display: inline-flex;
+            align-items: center;
+            gap: 15px;
+            background: rgba(255,255,255,0.15);
+            padding: 15px 25px;
+            border-radius: 50px;
+            margin-bottom: 30px;
+        ">
+            <i class="briefcase icon" style="font-size: 1.8em; color: white; margin: 0;"></i>
+            <span style="color: white; font-weight: 700; font-size: 1.3em;">Portfolio Builder</span>
+        </div>
+        
+        <h1 style="
+            color: white;
+            font-size: 3.2em;
+            font-weight: 700;
+            margin: 0 0 20px 0;
+            line-height: 1.2;
+        ">
+            Creez votre portfolio<br>en quelques clics
+        </h1>
+        
+        <p style="
+            color: rgba(255,255,255,0.9);
+            font-size: 1.3em;
+            margin-bottom: 40px;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+            line-height: 1.6;
+        ">
+            Concevez, personnalisez et partagez vos portfolios professionnels facilement.
+        </p>
+        
+        {{#isAuthenticated}}
+        <a href="/dashboard" class="ui huge inverted button" style="
+            border-radius: 30px;
+            padding: 18px 40px;
+            font-weight: 600;
+        ">
+            <i class="dashboard icon"></i> Acceder au dashboard
+        </a>
+        {{/isAuthenticated}}
+        
+        {{^isAuthenticated}}
+        <div style="display: flex; gap: 15px; justify-content: center; flex-wrap: wrap;">
+            <a href="/users/register" class="ui huge button" style="
+                background: white;
+                color: #667eea;
+                border-radius: 30px;
+                padding: 18px 40px;
+                font-weight: 700;
+                box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            ">
+                <i class="rocket icon"></i> Commencer gratuitement
+            </a>
+            <a href="/login" class="ui huge inverted button" style="
+                border-radius: 30px;
+                padding: 18px 40px;
+                font-weight: 600;
+            ">
+                <i class="sign in icon"></i> Se connecter
+            </a>
+        </div>
+        {{/isAuthenticated}}
+    </div>
+</div>
+
+<!-- Fonctionnalites -->
+<div style="text-align: center; margin-bottom: 40px;">
+    <h2 style="font-size: 2.2em; color: #2d3748; margin-bottom: 10px;">
+        Tout ce dont vous avez besoin
+    </h2>
+    <p style="color: #718096; font-size: 1.1em;">
+        Des outils puissants pour creer des portfolios impressionnants
     </p>
 </div>
 
-<!-- Cartes statistiques -->
-<div class="ui three column stackable grid" style="margin-bottom: 30px;">
-    <div class="column">
-        <div class="ui segment" style="background: #667eea; color: white; text-align: center;">
-            <h1>{{profileCount}}</h1>
-            <p>Profils</p>
+<div class="ui three column stackable grid" style="margin-bottom: 60px;">
+    <div class="column animate-fade-in animate-delay-1">
+        <div class="ui segment" style="text-align: center; padding: 40px 30px; height: 100%;">
+            <div style="
+                width: 80px;
+                height: 80px;
+                background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+                border-radius: 20px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                margin: 0 auto 25px auto;
+                box-shadow: 0 10px 30px rgba(102, 126, 234, 0.3);
+            ">
+                <i class="folder icon" style="font-size: 2em; color: white; margin: 0;"></i>
+            </div>
+            <h3 style="color: #2d3748; margin-bottom: 15px;">Profils multiples</h3>
+            <p style="color: #718096; line-height: 1.7;">
+                Creez plusieurs profils pour differents usages : CV, portfolio artistique, vitrine professionnelle...
+            </p>
         </div>
     </div>
-    <div class="column">
-        <div class="ui segment" style="background: #f2711c; color: white; text-align: center;">
-            <h1>{{rubricCount}}</h1>
-            <p>Rubriques</p>
+    <div class="column animate-fade-in animate-delay-2">
+        <div class="ui segment" style="text-align: center; padding: 40px 30px; height: 100%;">
+            <div style="
+                width: 80px;
+                height: 80px;
+                background: linear-gradient(135deg, #ed8936 0%, #dd6b20 100%);
+                border-radius: 20px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                margin: 0 auto 25px auto;
+                box-shadow: 0 10px 30px rgba(237, 137, 54, 0.3);
+            ">
+                <i class="th list icon" style="font-size: 2em; color: white; margin: 0;"></i>
+            </div>
+            <h3 style="color: #2d3748; margin-bottom: 15px;">Rubriques flexibles</h3>
+            <p style="color: #718096; line-height: 1.7;">
+                Organisez vos informations avec des rubriques personnalisables : experiences, formations, competences...
+            </p>
         </div>
     </div>
-    <div class="column">
-        <div class="ui segment" style="background: #21ba45; color: white; text-align: center;">
-            <h1>{{publishedCount}}</h1>
-            <p>Publies</p>
+    <div class="column animate-fade-in animate-delay-3">
+        <div class="ui segment" style="text-align: center; padding: 40px 30px; height: 100%;">
+            <div style="
+                width: 80px;
+                height: 80px;
+                background: linear-gradient(135deg, #48bb78 0%, #38a169 100%);
+                border-radius: 20px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                margin: 0 auto 25px auto;
+                box-shadow: 0 10px 30px rgba(72, 187, 120, 0.3);
+            ">
+                <i class="share alternate icon" style="font-size: 2em; color: white; margin: 0;"></i>
+            </div>
+            <h3 style="color: #2d3748; margin-bottom: 15px;">Partage facile</h3>
+            <p style="color: #718096; line-height: 1.7;">
+                Partagez vos profils avec un lien unique. Ideal pour LinkedIn, candidatures ou clients.
+            </p>
         </div>
     </div>
 </div>
 
-<!-- Section Mes Profils -->
-<h2 class="ui header">
-    <i class="folder icon"></i> Mes Profils
-</h2>
-<div class="ui divider"></div>
-
-{{#profiles}}
-<div class="ui segment">
-    <h3>{{name}}</h3>
-    <p>{{description}}</p>
-    <a href="/profiles/{{id}}/edit" class="ui blue button">
-        <i class="edit icon"></i> Editer
+<!-- Call to action -->
+{{^isAuthenticated}}
+<div class="ui segment" style="
+    background: linear-gradient(135deg, #f7fafc 0%, #edf2f7 100%);
+    text-align: center;
+    padding: 60px 40px;
+    border-radius: 20px !important;
+">
+    <h2 style="color: #2d3748; font-size: 2em; margin-bottom: 15px;">
+        Pret a creer votre portfolio ?
+    </h2>
+    <p style="color: #718096; font-size: 1.1em; margin-bottom: 30px;">
+        Rejoignez Portfolio Builder gratuitement et commencez a construire votre presence en ligne.
+    </p>
+    <a href="/users/register" class="ui huge button" style="
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        border-radius: 30px;
+        padding: 18px 50px;
+        font-weight: 700;
+        box-shadow: 0 10px 30px rgba(102, 126, 234, 0.3);
+    ">
+        <i class="user plus icon"></i> Creer mon compte
     </a>
 </div>
-{{/profiles}}
-
-{{^profiles}}
-<div class="ui placeholder segment">
-    <div class="ui icon header">
-        <i class="folder open outline icon"></i>
-        Vous n'avez pas encore de profil
-    </div>
-    <a href="/profiles/user/{{user.id}}" class="ui primary button">
-        <i class="plus icon"></i> Creer mon premier profil
-    </a>
-</div>
-{{/profiles}}
-
-<!-- Actions rapides -->
-<h2 class="ui header" style="margin-top: 40px;">
-    <i class="lightning icon"></i> Actions rapides
-</h2>
-<div class="ui divider"></div>
-
-<div class="ui four column stackable grid">
-    <div class="column">
-        <a href="/profiles/user/{{user.id}}" class="ui fluid button">
-            <i class="plus icon"></i> Nouveau profil
-        </a>
-    </div>
-    <div class="column">
-        <a href="/users/{{user.id}}/edit" class="ui fluid button">
-            <i class="user edit icon"></i> Mon compte
-        </a>
-    </div>
-    <div class="column">
-        <a href="/users" class="ui fluid button">
-            <i class="users icon"></i> Utilisateurs
-        </a>
-    </div>
-    <div class="column">
-        <a href="/" class="ui fluid button">
-            <i class="home icon"></i> Accueil
-        </a>
-    </div>
-</div>
+{{/isAuthenticated}}
 
 {{> partials/footer }}

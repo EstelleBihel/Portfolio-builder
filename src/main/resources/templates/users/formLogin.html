@@ -1,9 +1,120 @@
-{{ > partials/header }}
+{{> partials/header }}
 
-<form method="post" action="./login">
-    <input type="text" name="username" placeholder="E-mail address or username">
-    <input type="password" name="password" placeholder="Password">
-    <button type="submit">Login</button>
-</form>
+<div class="ui middle aligned center aligned grid" style="min-height: calc(100vh - 200px);">
+    <div class="column" style="max-width: 450px;">
+        
+        <div class="ui segment" style="
+            border-radius: 20px !important;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.1);
+            padding: 50px 40px;
+        ">
+            <!-- Logo -->
+            <div style="text-align: center; margin-bottom: 35px;">
+                <div style="
+                    display: inline-flex;
+                    align-items: center;
+                    gap: 12px;
+                    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+                    padding: 15px 25px;
+                    border-radius: 15px;
+                    box-shadow: 0 10px 30px rgba(102, 126, 234, 0.3);
+                    margin-bottom: 25px;
+                ">
+                    <i class="briefcase icon" style="font-size: 1.5em; color: white; margin: 0;"></i>
+                    <span style="color: white; font-weight: 700; font-size: 1.2em;">Portfolio Builder</span>
+                </div>
+                <h2 style="color: #2d3748; margin: 0 0 8px 0;">Bon retour !</h2>
+                <p style="color: #718096; margin: 0;">Connectez-vous a votre compte</p>
+            </div>
 
-{{ > partials/footer }}
+            <!-- Messages -->
+            {{#param.error}}
+            <div class="ui negative message" style="text-align: left;">
+                <i class="close icon"></i>
+                <div class="header">Erreur de connexion</div>
+                <p>Identifiants incorrects. Veuillez reessayer.</p>
+            </div>
+            {{/param.error}}
+
+            {{#param.logout}}
+            <div class="ui positive message" style="text-align: left;">
+                <i class="close icon"></i>
+                <div class="header">Deconnexion reussie</div>
+                <p>Vous avez ete deconnecte avec succes.</p>
+            </div>
+            {{/param.logout}}
+
+            {{#success}}
+            <div class="ui positive message" style="text-align: left;">
+                <i class="close icon"></i>
+                <div class="header">Succes !</div>
+                <p>{{success}}</p>
+            </div>
+            {{/success}}
+
+            <!-- Formulaire -->
+            <form class="ui form" action="/login" method="POST">
+                <div class="field">
+                    <label style="color: #2d3748;">Nom d'utilisateur</label>
+                    <div class="ui left icon input">
+                        <i class="user icon" style="color: #667eea;"></i>
+                        <input type="text" name="username" placeholder="Votre nom d'utilisateur" required autofocus>
+                    </div>
+                </div>
+                
+                <div class="field">
+                    <label style="color: #2d3748;">Mot de passe</label>
+                    <div class="ui left icon input">
+                        <i class="lock icon" style="color: #667eea;"></i>
+                        <input type="password" name="password" placeholder="Votre mot de passe" required>
+                    </div>
+                </div>
+
+                <button type="submit" class="ui fluid large button" style="
+                    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+                    color: white;
+                    margin-top: 25px;
+                    padding: 15px;
+                    font-weight: 600;
+                    border-radius: 10px;
+                    box-shadow: 0 5px 20px rgba(102, 126, 234, 0.3);
+                ">
+                    <i class="sign in icon"></i> Se connecter
+                </button>
+            </form>
+
+            <div class="ui divider" style="margin: 30px 0;"></div>
+
+            <div style="text-align: center;">
+                <p style="color: #718096; margin-bottom: 15px;">Pas encore de compte ?</p>
+                <a href="/users/register" class="ui fluid button" style="
+                    background: transparent;
+                    border: 2px solid #667eea;
+                    color: #667eea;
+                    font-weight: 600;
+                    border-radius: 10px;
+                    padding: 12px;
+                ">
+                    <i class="user plus icon"></i> Creer un compte
+                </a>
+            </div>
+            
+            <div style="text-align: center; margin-top: 25px;">
+                <a href="/" style="color: #718096; font-size: 0.9em;">
+                    <i class="arrow left icon"></i> Retour a l'accueil
+                </a>
+            </div>
+        </div>
+        
+    </div>
+</div>
+
+<script>
+$(document).ready(function() {
+    $('.message .close').on('click', function() {
+        $(this).closest('.message').transition('fade');
+    });
+});
+</script>
+
+{{> partials/footer }}

@@ -40,7 +40,6 @@
 {{/error}}
 
 <!-- Liste des profils -->
-{{#profiles.size}}
 <div class="ui three column stackable cards">
     {{#profiles}}
     <div class="card">
@@ -79,7 +78,6 @@
     </div>
     {{/profiles}}
 </div>
-{{/profiles.size}}
 
 {{^profiles}}
 <!-- Message si aucun profil -->
@@ -104,7 +102,7 @@
         <i class="folder plus icon"></i> Creer un nouveau profil
     </div>
     <div class="content">
-        <form class="ui form" id="createProfileForm" action="/profiles/user/{{owner.id}}/create" method="POST">
+        <form class="ui form" id="createProfileForm" action="/profiles/user/{{user.id}}/create" method="POST">
             <div class="field required">
                 <label>Nom du profil</label>
                 <input type="text" name="name" placeholder="Ex: Mon CV Developpeur" required maxlength="65">

@@ -1,0 +1,179 @@
+{{> partials/header }}
+{{> partials/navbar }}
+
+<!-- En-tete de la page -->
+<div class="ui segment" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border: none; border-radius: 10px; margin-bottom: 30px;">
+    <div class="ui grid">
+        <div class="twelve wide column">
+            <h1 class="ui inverted header" style="margin-bottom: 5px;">
+                <i class="edit icon"></i>
+                Modifier mon compte
+            </h1>
+            <p style="color: rgba(255,255,255,0.9); font-size: 1.1em;">
+                Mettez a jour vos informations personnelles
+            </p>
+        </div>
+        <div class="four wide column right aligned middle aligned">
+            <a href="/users/{{user.id}}" class="ui inverted button">
+                <i class="arrow left icon"></i> Retour
+            </a>
+        </div>
+    </div>
+</div>
+
+<!-- Message de succes -->
+{{#success}}
+<div class="ui positive message">
+    <i class="close icon"></i>
+    <div class="header">Succes !</div>
+    <p>{{success}}</p>
+</div>
+{{/success}}
+
+<!-- Message d'erreur -->
+{{#error}}
+<div class="ui negative message">
+    <i class="close icon"></i>
+    <div class="header">Erreur</div>
+    <p>{{error}}</p>
+</div>
+{{/error}}
+
+<div class="ui grid">
+    <div class="ten wide column">
+        <!-- Formulaire de modification -->
+        <div class="ui segment">
+            <h3 class="ui header">
+                <i class="id card icon" style="color: #667eea;"></i>
+                Informations personnelles
+            </h3>
+            <div class="ui divider"></div>
+            
+            <form class="ui form" action="/users/{{user.id}}/update" method="POST">
+                <div class="two fields">
+                    <div class="field required">
+                        <label>Prenom</label>
+                        <input type="text" name="firstname" value="{{user.firstname}}" required maxlength="50">
+                    </div>
+                    <div class="field required">
+                        <label>Nom</label>
+                        <input type="text" name="lastname" value="{{user.lastname}}" required maxlength="50">
+                    </div>
+                </div>
+                
+                <div class="field">
+                    <label>Nom d'utilisateur</label>
+                    <div class="ui left icon input">
+                        <i class="user icon"></i>
+                        <input type="text" value="{{user.username}}" disabled>
+                    </div>
+                    <small style="color: #999;">Le nom d'utilisateur ne peut pas etre modifie.</small>
+                </div>
+                
+                <div class="field required">
+                    <label>Email</label>
+                    <div class="ui left icon input">
+                        <i class="envelope icon"></i>
+                        <input type="email" name="email" value="{{user.email}}" required maxlength="100">
+                    </div>
+                </div>
+                
+                <div class="ui divider"></div>
+                
+                <div class="ui buttons">
+                    <button type="submit" class="ui primary button">
+                        <i class="save icon"></i> Enregistrer
+                    </button>
+                    <a href="/users/{{user.id}}" class="ui button">
+                        Annuler
+                    </a>
+                </div>
+            </form>
+        </div>
+    </div>
+    
+    <div class="six wide column">
+        <!-- Changer le mot de passe -->
+        <div class="ui segment">
+            <h3 class="ui header">
+                <i class="lock icon" style="color: #667eea;"></i>
+                Securite
+            </h3>
+            <div class="ui divider"></div>
+            
+            <p style="color: #666;">
+                Pour des raisons de securite, le changement de mot de passe se fait sur une page dediee.
+            </p>
+            <a href="/users/{{user.id}}/password" class="ui fluid button">
+                <i class="key icon"></i> Changer mon mot de passe
+            </a>
+        </div>
+        
+        <!-- Zone de danger -->
+        <div class="ui red segment">
+            <h3 class="ui header" style="color: #db2828;">
+                <i class="exclamation triangle icon"></i>
+                Zone de danger
+            </h3>
+            <div class="ui divider"></div>
+            
+            <p style="color: #666;">
+                La suppression de votre compte est irreversible. Tous vos profils et rubriques seront supprimes.
+            </p>
+            <button class="ui red fluid button" onclick="$('#deleteAccountModal').modal('show');">
+                <i class="trash icon"></i> Supprimer mon compte
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- Modal de suppression du compte -->
+<div class="ui small modal" id="deleteAccountModal">
+    <i class="close icon"></i>
+    <div class="header">
+        <i class="exclamation triangle icon" style="color: #db2828;"></i> 
+        Supprimer mon compte
+    </div>
+    <div class="content">
+        <p>Etes-vous vraiment sur de vouloir supprimer votre compte ?</p>
+        <div class="ui warning message">
+            <i class="exclamation triangle icon"></i>
+            <strong>Attention !</strong> Cette action est irreversible. Tous vos profils, rubriques et donnees seront definitivement supprimes.
+        </div>
+        <p>Pour confirmer, tapez votre nom d'utilisateur : <strong>{{user.username}}</strong></p>
+        <div class="ui input fluid">
+            <input type="text" id="confirmUsername" placeholder="Tapez votre nom d'utilisateur">
+        </div>
+    </div>
+    <div class="actions">
+        <div class="ui cancel button">Annuler</div>
+        <form action="/users/{{user.id}}/delete-account" method="POST" style="display: inline;" id="deleteAccountForm">
+            <button type="submit" class="ui negative button" id="confirmDeleteBtn" disabled>
+                <i class="trash icon"></i> Supprimer definitivement
+            </button>
+        </form>
+    </div>
+</div>
+
+<script>
+$(document).ready(function() {
+    $('.message .close').on('click', function() {
+        $(this).closest('.message').transition('fade');
+    });
+    
+    $('#deleteAccountModal').modal({ closable: true });
+    
+    // Validation de la suppression du compte
+    $('#confirmUsername').on('input', function() {
+        var username = '{{user.username}}';
+        var input = $(this).val();
+        if (input === username) {
+            $('#confirmDeleteBtn').prop('disabled', false).removeClass('disabled');
+        } else {
+            $('#confirmDeleteBtn').prop('disabled', true).addClass('disabled');
+        }
+    });
+});
+</script>
+
+{{> partials/footer }}

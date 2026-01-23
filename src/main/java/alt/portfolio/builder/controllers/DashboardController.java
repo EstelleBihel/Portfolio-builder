@@ -13,10 +13,7 @@ import alt.portfolio.builder.entities.Profile;
 import alt.portfolio.builder.entities.User;
 import alt.portfolio.builder.services.ProfileService;
 
-/**
- * Contrôleur pour le tableau de bord utilisateur US-002b : Accéder à mon
- * tableau de bord (dashboard)
- */
+//Contrôleur pour le tableau de bord utilisateur US-002b : Accéder à mon tableau de bord (dashboard)
 @Controller
 @RequestMapping("/dashboard")
 public class DashboardController {
@@ -24,10 +21,8 @@ public class DashboardController {
 	@Autowired
 	private ProfileService profileService;
 
-	/**
-	 * Affiche le tableau de bord de l'utilisateur connecté Présente un résumé de
-	 * son activité : profils, rubriques, etc.
-	 */
+	// Affiche le tableau de bord de l'utilisateur connecté Présente un résumé de
+	// son activité : profils, rubriques, etc.
 	@GetMapping({ "", "/" })
 	public ModelAndView index(Authentication auth) {
 		ModelAndView mv = new ModelAndView("dashboard/index");
@@ -48,7 +43,7 @@ public class DashboardController {
 		mv.addObject("rubricCount", totalRubrics);
 
 		// Profils publiés (pour plus tard - on prépare)
-		long publishedCount = profiles.stream().filter(p -> p.isPublished() != null && p.isPublished()).count();
+		long publishedCount = profiles.stream().filter(Profile::isPublished).count();
 		mv.addObject("publishedCount", publishedCount);
 
 		return mv;

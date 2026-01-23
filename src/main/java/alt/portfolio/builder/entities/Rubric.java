@@ -1,5 +1,6 @@
 package alt.portfolio.builder.entities;
 
+import java.util.List;
 import java.util.UUID;
 
 import jakarta.persistence.Column;
@@ -7,6 +8,7 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.Id;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Transient;
 import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
@@ -41,7 +43,19 @@ public class Rubric {
 	@ToString.Exclude
 	private Profile profile;
 
-	// Getters et Setters explicites
+	// Champ transient (pas stocké en BDD, juste pour l'affichage)
+	@Transient
+	private List<Element> elements;
+
+	// Getter
+	public List<Element> getElements() {
+		return elements;
+	}
+
+	// Setter
+	public void setElements(List<Element> elements) {
+		this.elements = elements;
+	}
 
 	public UUID getId() {
 		return id;

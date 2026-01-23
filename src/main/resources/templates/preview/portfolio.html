@@ -1,0 +1,114 @@
+{{> partials/header }}
+
+<!-- Barre de prévisualisation -->
+<div style="background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%); padding: 12px 20px; position: sticky; top: 0; z-index: 100;">
+    <div style="max-width: 1200px; margin: 0 auto; display: flex; align-items: center; justify-content: space-between;">
+        <span style="font-weight: 600; color: #78350f;">
+            👁️ Mode prévisualisation - Portfolio
+        </span>
+        <div style="display: flex; gap: 8px;">
+            <a href="/profiles/{{profile.id}}/preview?mode=cv" style="padding: 6px 12px; background: white; color: #374151; border-radius: 6px; text-decoration: none; font-size: 14px;">
+                📄 Voir en mode CV
+            </a>
+            <a href="/profiles/{{profile.id}}/edit" style="padding: 6px 12px; background: #1f2937; color: white; border-radius: 6px; text-decoration: none; font-size: 14px;">
+                ← Retour à l'édition
+            </a>
+        </div>
+    </div>
+</div>
+
+<!-- Contenu Portfolio -->
+<div style="min-height: 100vh; background: #f8fafc;">
+
+    <!-- Header du Portfolio -->
+    <header style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 60px 30px;">
+        <div style="max-width: 900px; margin: 0 auto; display: flex; align-items: center; gap: 30px;">
+            <div style="width: 120px; height: 120px; border-radius: 50%; background: rgba(255,255,255,0.2); display: flex; align-items: center; justify-content: center; font-size: 2.5rem; font-weight: 700; flex-shrink: 0;">
+                {{owner.initials}}
+            </div>
+            <div>
+                <h1 style="font-size: 2.5rem; margin: 0 0 8px 0;">{{owner.firstname}} {{owner.lastname}}</h1>
+                <p style="font-size: 1.25rem; opacity: 0.9; margin: 0 0 8px 0;">{{profile.name}}</p>
+                {{#profile.description}}
+                <p style="opacity: 0.8; margin: 0; max-width: 600px;">{{profile.description}}</p>
+                {{/profile.description}}
+            </div>
+        </div>
+    </header>
+
+    <!-- Rubriques -->
+    <main style="max-width: 900px; margin: 0 auto; padding: 30px;">
+        {{#rubrics}}
+        <section style="margin-bottom: 40px;">
+            <h2 style="display: flex; align-items: center; gap: 12px; font-size: 1.5rem; color: #1f2937; margin-bottom: 16px; padding-bottom: 12px; border-bottom: 2px solid #e5e7eb;">
+                <span style="font-size: 1.5rem;">
+                    {{#isTypeExperience}}💼{{/isTypeExperience}}
+                    {{#isTypeFormation}}🎓{{/isTypeFormation}}
+                    {{#isTypeCompetence}}⚡{{/isTypeCompetence}}
+                    {{#isTypeProjet}}🚀{{/isTypeProjet}}
+                    {{^isTypeExperience}}{{^isTypeFormation}}{{^isTypeCompetence}}{{^isTypeProjet}}📌{{/isTypeProjet}}{{/isTypeCompetence}}{{/isTypeFormation}}{{/isTypeExperience}}
+                </span>
+                {{name}}
+            </h2>
+            
+            {{#content}}
+            <p style="color: #6b7280; margin-bottom: 20px;">{{content}}</p>
+            {{/content}}
+
+            <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 20px;">
+                {{#elements}}
+                <div style="background: white; border-radius: 12px; padding: 20px; box-shadow: 0 2px 8px rgba(0,0,0,0.08); transition: transform 0.2s, box-shadow 0.2s;">
+                    <div>
+                        <h3 style="margin: 0 0 4px 0; font-size: 1.1rem; color: #1f2937;">{{title}}</h3>
+                        {{#subtitle}}
+                        <p style="margin: 0; color: #6b7280; font-size: 0.9rem;">{{subtitle}}</p>
+                        {{/subtitle}}
+                    </div>
+                    
+                    <div style="display: flex; flex-wrap: wrap; gap: 12px; margin: 12px 0;">
+                        {{#startDate}}
+                        <span style="font-size: 0.8rem; color: #6b7280;">
+                            📅 {{startDate}} {{#endDate}}- {{endDate}}{{/endDate}}
+                        </span>
+                        {{/startDate}}
+                        {{#location}}
+                        <span style="font-size: 0.8rem; color: #6b7280;">
+                            📍 {{location}}
+                        </span>
+                        {{/location}}
+                    </div>
+                    
+                    {{#description}}
+                    <p style="font-size: 0.9rem; color: #4b5563; line-height: 1.6; margin: 12px 0;">{{description}}</p>
+                    {{/description}}
+                    
+                    {{#link}}
+                    <a href="{{link}}" target="_blank" style="display: inline-block; margin-top: 12px; color: #667eea; text-decoration: none; font-size: 0.875rem; font-weight: 500;">
+                        🔗 Voir le projet
+                    </a>
+                    {{/link}}
+                </div>
+                {{/elements}}
+            </div>
+
+            {{^elements}}
+            <p style="color: #9ca3af; font-style: italic;">Aucun élément dans cette rubrique</p>
+            {{/elements}}
+        </section>
+        {{/rubrics}}
+
+        {{^rubrics}}
+        <div style="text-align: center; padding: 60px 30px; color: #6b7280;">
+            <p>Ce portfolio ne contient pas encore de contenu.</p>
+        </div>
+        {{/rubrics}}
+    </main>
+
+    <!-- Footer Portfolio -->
+    <footer style="text-align: center; padding: 30px; color: #9ca3af; font-size: 0.875rem;">
+        <p>Portfolio créé avec Portfolio Builder</p>
+    </footer>
+
+</div>
+
+{{> partials/footer }}

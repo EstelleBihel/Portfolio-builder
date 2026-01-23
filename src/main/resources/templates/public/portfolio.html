@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{profile.name}} - {{owner.firstname}} {{owner.lastname}}</title>
+    <meta name="description" content="{{profile.description}}">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif; line-height: 1.6; color: #1f2937; }
+        .container { min-height: 100vh; background: #f8fafc; }
+        .header { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 60px 30px; }
+        .header-content { max-width: 900px; margin: 0 auto; display: flex; align-items: center; gap: 30px; }
+        .avatar { width: 120px; height: 120px; border-radius: 50%; background: rgba(255,255,255,0.2); display: flex; align-items: center; justify-content: center; font-size: 2.5rem; font-weight: 700; }
+        .header h1 { font-size: 2.5rem; margin-bottom: 8px; }
+        .header .title { font-size: 1.25rem; opacity: 0.9; margin-bottom: 8px; }
+        .header .desc { opacity: 0.8; max-width: 600px; }
+        main { max-width: 900px; margin: 0 auto; padding: 30px; }
+        section { margin-bottom: 40px; }
+        h2 { display: flex; align-items: center; gap: 12px; font-size: 1.5rem; margin-bottom: 16px; padding-bottom: 12px; border-bottom: 2px solid #e5e7eb; }
+        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 20px; }
+        .card { background: white; border-radius: 12px; padding: 20px; box-shadow: 0 2px 8px rgba(0,0,0,0.08); transition: transform 0.2s; }
+        .card:hover { transform: translateY(-4px); box-shadow: 0 8px 24px rgba(0,0,0,0.12); }
+        .card h3 { font-size: 1.1rem; margin-bottom: 4px; }
+        .card .subtitle { color: #6b7280; font-size: 0.9rem; }
+        .card .meta { display: flex; flex-wrap: wrap; gap: 12px; margin: 12px 0; font-size: 0.8rem; color: #6b7280; }
+        .card .desc { font-size: 0.9rem; color: #4b5563; }
+        .card .link { display: inline-block; margin-top: 12px; color: #667eea; text-decoration: none; font-weight: 500; }
+        footer { text-align: center; padding: 30px; color: #9ca3af; font-size: 0.875rem; }
+        footer a { color: #667eea; text-decoration: none; }
+        @media (max-width: 768px) { .header-content { flex-direction: column; text-align: center; } .header h1 { font-size: 2rem; } .grid { grid-template-columns: 1fr; } }
+    </style>
+</head>
+<body>
+<div class="container">
+    <header class="header">
+        <div class="header-content">
+            <div class="avatar">
+                {{owner.initials}}
+            </div>
+            <div>
+                <h1>{{owner.firstname}} {{owner.lastname}}</h1>
+                <p class="title">{{profile.name}}</p>
+                {{#profile.description}}<p class="desc">{{profile.description}}</p>{{/profile.description}}
+            </div>
+        </div>
+    </header>
+
+    <main>
+        {{#rubrics}}
+        <section>
+            <h2>
+                <span>
+                    {{#isTypeExperience}}💼{{/isTypeExperience}}
+                    {{#isTypeFormation}}🎓{{/isTypeFormation}}
+                    {{#isTypeCompetence}}⚡{{/isTypeCompetence}}
+                    {{#isTypeProjet}}🚀{{/isTypeProjet}}
+                    {{^isTypeExperience}}{{^isTypeFormation}}{{^isTypeCompetence}}{{^isTypeProjet}}📌{{/isTypeProjet}}{{/isTypeCompetence}}{{/isTypeFormation}}{{/isTypeExperience}}
+                </span>
+                {{name}}
+            </h2>
+            {{#content}}<p style="color: #6b7280; margin-bottom: 20px;">{{content}}</p>{{/content}}
+            <div class="grid">
+                {{#elements}}
+                <div class="card">
+                    <h3>{{title}}</h3>
+                    {{#subtitle}}<p class="subtitle">{{subtitle}}</p>{{/subtitle}}
+                    <div class="meta">
+                        {{#startDate}}<span>📅 {{startDate}} {{#endDate}}- {{endDate}}{{/endDate}}</span>{{/startDate}}
+                        {{#location}}<span>📍 {{location}}</span>{{/location}}
+                    </div>
+                    {{#description}}<p class="desc">{{description}}</p>{{/description}}
+                    {{#link}}<a href="{{link}}" target="_blank" class="link">🔗 Voir le projet</a>{{/link}}
+                </div>
+                {{/elements}}
+            </div>
+            {{^elements}}<p style="color: #9ca3af; font-style: italic;">Aucun élément</p>{{/elements}}
+        </section>
+        {{/rubrics}}
+        {{^rubrics}}<div style="text-align: center; padding: 60px; color: #6b7280;">Ce portfolio ne contient pas encore de contenu.</div>{{/rubrics}}
+    </main>
+
+    <footer>
+        <p>Portfolio créé avec <a href="/">Portfolio Builder</a></p>
+    </footer>
+</div>
+</body>
+</html>

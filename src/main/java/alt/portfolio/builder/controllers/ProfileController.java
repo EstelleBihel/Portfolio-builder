@@ -1,5 +1,6 @@
 package alt.portfolio.builder.controllers;
 
+import java.util.List;
 import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -8,258 +9,227 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import alt.portfolio.builder.entities.Element;
 import alt.portfolio.builder.entities.Profile;
+import alt.portfolio.builder.entities.Rubric;
 import alt.portfolio.builder.entities.User;
-import alt.portfolio.builder.repositories.UserRepository;
+import alt.portfolio.builder.services.ElementService;
 import alt.portfolio.builder.services.ProfileService;
 import alt.portfolio.builder.services.RubricService;
+import alt.portfolio.builder.services.UserService;
 
-/**
- * Controleur pour la gestion des profils
- */
+//Controleur pour la gestion des profils EPIC 4 : Publication et partage
 @Controller
-@RequestMapping("/profiles")
 public class ProfileController {
 
 	@Autowired
 	private ProfileService profileService;
 
 	@Autowired
-	private UserRepository userRepository;
+	private UserService userService;
 
 	@Autowired
 	private RubricService rubricService;
 
-	/**
-	 * Afficher tous les profils (admin)
-	 */
-	@GetMapping("")
-	public ModelAndView index() {
-		return new ModelAndView("profiles/index", "profiles", profileService.getAllProfiles());
-	}
+	@Autowired
+	private ElementService elementService;
 
-	/**
-	 * Afficher les profils d'un utilisateur specifique
-	 */
-	@GetMapping("/user/{userId}")
-	public ModelAndView listProfilesByUser(@PathVariable UUID userId, Authentication auth) {
-		ModelAndView mv = new ModelAndView("profiles/index");
+	// =========================================================================
+	// LISTE DES PROFILS - US-007
+	// =========================================================================
 
+	@GetMapping("/profiles/user/{userId}")
+	public ModelAndView listProfiles(@PathVariable UUID userId, Authentication auth) {
 		User currentUser = (User) auth.getPrincipal();
 
 		if (!currentUser.getId().equals(userId)) {
-			return new ModelAndView("redirect:/profiles/user/" + currentUser.getId());
+			return new ModelAndView("redirect:/dashboard");
 		}
 
-		User owner = userRepository.findById(currentUser.getId()).orElse(currentUser);
+		List<Profile> profiles = profileService.getProfilesByUser(userId);
 
-		mv.addObject("profiles", profileService.getProfilesByUser(userId));
-		mv.addObject("owner", owner);
-
+		ModelAndView mv = new ModelAndView("profiles/index");
+		mv.addObject("profiles", profiles);
+		mv.addObject("user", currentUser);
+		mv.addObject("isEmpty", profiles.isEmpty());
 		return mv;
 	}
 
-	/**
-	 * Creer un nouveau profil
-	 */
-	@PostMapping("/user/{userId}/create")
+	// =========================================================================
+	// CRÉATION DE PROFIL - US-006
+	// =========================================================================
+
+	@PostMapping("/profiles/user/{userId}/create")
 	public String createProfile(@PathVariable UUID userId, @RequestParam String name,
 			@RequestParam(required = false) String description, Authentication auth,
 			RedirectAttributes redirectAttributes) {
 
 		User currentUser = (User) auth.getPrincipal();
+
 		if (!currentUser.getId().equals(userId)) {
-			redirectAttributes.addFlashAttribute("error",
-					"Vous ne pouvez pas creer un profil pour un autre utilisateur.");
-			return "redirect:/profiles/user/" + currentUser.getId();
-		}
-
-		if (name == null || name.trim().isEmpty()) {
-			redirectAttributes.addFlashAttribute("error", "Le nom du profil est obligatoire.");
-			return "redirect:/profiles/user/" + userId;
-		}
-
-		name = name.trim();
-		if (name.length() > 65) {
-			name = name.substring(0, 65);
-		}
-
-		if (description != null) {
-			description = description.trim();
-			if (description.isEmpty()) {
-				description = null;
-			} else if (description.length() > 500) {
-				description = description.substring(0, 500);
-			}
-		}
-
-		try {
-			User owner = userRepository.findById(currentUser.getId())
-					.orElseThrow(() -> new IllegalArgumentException("Utilisateur introuvable en base de donnees"));
-
-			Profile profile = new Profile();
-			profile.setName(name);
-			profile.setDescription(description);
-			profile.setOwner(owner);
-			profile.setPublished(false);
-
-			String slug = generateSlug(name, owner.getId());
-			profile.setSlug(slug);
-
-			profileService.saveProfile(profile);
-
-			redirectAttributes.addFlashAttribute("success", "Le profil \"" + name + "\" a ete cree avec succes !");
-
-		} catch (Exception e) {
-			redirectAttributes.addFlashAttribute("error", "Erreur lors de la creation du profil : " + e.getMessage());
-		}
-
-		return "redirect:/profiles/user/" + userId;
-	}
-
-	/**
-	 * Afficher le formulaire d'edition d'un profil
-	 */
-	@GetMapping("/{id}/edit")
-	public ModelAndView edit(@PathVariable UUID id, Authentication auth) {
-		Profile profile = profileService.getProfileById(id);
-
-		if (profile == null) {
-			return new ModelAndView("redirect:/dashboard");
-		}
-
-		User currentUser = (User) auth.getPrincipal();
-		if (!profile.getOwner().getId().equals(currentUser.getId())) {
-			return new ModelAndView("redirect:/profiles/user/" + currentUser.getId());
-		}
-
-		ModelAndView mv = new ModelAndView("profiles/edit");
-		mv.addObject("profile", profile);
-		// IMPORTANT : Envoyer les rubriques separement pour eviter la double boucle
-		// Mustache
-		mv.addObject("rubrics", rubricService.getRubricsByProfile(id));
-		return mv;
-	}
-
-	/**
-	 * Mettre a jour un profil
-	 */
-	@PostMapping("/{id}/update")
-	public String updateProfile(@PathVariable UUID id, @RequestParam String name,
-			@RequestParam(required = false) String description, @RequestParam(required = false) String slug,
-			@RequestParam(required = false) String isPublished, Authentication auth,
-			RedirectAttributes redirectAttributes) {
-
-		Profile profile = profileService.getProfileById(id);
-
-		if (profile == null) {
-			redirectAttributes.addFlashAttribute("error", "Profil introuvable.");
 			return "redirect:/dashboard";
 		}
 
+		Profile profile = profileService.createProfile(userId, name, description);
+		redirectAttributes.addFlashAttribute("success", "Profil '" + name + "' créé avec succès !");
+
+		return "redirect:/profiles/" + profile.getId() + "/edit";
+	}
+
+	// =========================================================================
+	// ÉDITION DE PROFIL - US-008
+	// =========================================================================
+
+	@GetMapping("/profiles/{id}/edit")
+	public ModelAndView editProfile(@PathVariable UUID id, Authentication auth) {
 		User currentUser = (User) auth.getPrincipal();
-		if (!profile.getOwner().getId().equals(currentUser.getId())) {
-			redirectAttributes.addFlashAttribute("error", "Vous n'avez pas le droit de modifier ce profil.");
-			return "redirect:/profiles/user/" + currentUser.getId();
+		Profile profile = profileService.getProfileById(id);
+
+		if (profile == null || !profile.getOwner().getId().equals(currentUser.getId())) {
+			return new ModelAndView("redirect:/dashboard");
 		}
 
-		if (name == null || name.trim().isEmpty()) {
-			redirectAttributes.addFlashAttribute("error", "Le nom du profil est obligatoire.");
-			return "redirect:/profiles/" + id + "/edit";
+		List<Rubric> rubrics = rubricService.getRubricsByProfile(id);
+
+		ModelAndView mv = new ModelAndView("profiles/edit");
+		mv.addObject("profile", profile);
+		mv.addObject("rubrics", rubrics);
+		mv.addObject("user", currentUser);
+		return mv;
+	}
+
+	@PostMapping("/profiles/{id}/update")
+	public String updateProfile(@PathVariable UUID id, @RequestParam String name,
+			@RequestParam(required = false) String description, @RequestParam(required = false) String slug,
+			@RequestParam(required = false) Boolean isPublishedPortfolio,
+			@RequestParam(required = false) Boolean isPublishedCv, Authentication auth,
+			RedirectAttributes redirectAttributes) {
+
+		User currentUser = (User) auth.getPrincipal();
+		Profile profile = profileService.getProfileById(id);
+
+		if (profile == null || !profile.getOwner().getId().equals(currentUser.getId())) {
+			return "redirect:/dashboard";
 		}
 
-		name = name.trim();
-		if (name.length() > 65) {
-			name = name.substring(0, 65);
+		profile.setName(name);
+		profile.setDescription(description);
+
+		// Mise à jour du slug si fourni
+		if (slug != null && !slug.trim().isEmpty()) {
+			profile.setSlug(slug.trim());
 		}
 
-		if (description != null) {
-			description = description.trim();
-			if (description.isEmpty()) {
-				description = null;
-			} else if (description.length() > 500) {
-				description = description.substring(0, 500);
-			}
-		}
+		// US-022 : Publication CV et/ou Portfolio
+		profile.setIsPublishedPortfolio(isPublishedPortfolio != null && isPublishedPortfolio);
+		profile.setIsPublishedCv(isPublishedCv != null && isPublishedCv);
 
-		if (slug != null) {
-			slug = slug.trim().toLowerCase().replaceAll("[^a-z0-9\\s-]", "").replaceAll("\\s+", "-")
-					.replaceAll("-+", "-").replaceAll("^-|-$", "");
-			if (slug.isEmpty()) {
-				slug = generateSlug(name, currentUser.getId());
-			} else if (slug.length() > 100) {
-				slug = slug.substring(0, 100);
-			}
-		}
-
-		try {
-			profile.setName(name);
-			profile.setDescription(description);
-			profile.setSlug(slug);
-
-			boolean published = isPublished != null && (isPublished.equals("on") || isPublished.equals("true"));
-			profile.setPublished(published);
-
-			profileService.saveProfile(profile);
-
-			redirectAttributes.addFlashAttribute("success", "Le profil a ete mis a jour avec succes !");
-
-		} catch (Exception e) {
-			redirectAttributes.addFlashAttribute("error", "Erreur lors de la mise a jour : " + e.getMessage());
-		}
+		profileService.saveProfile(profile);
+		redirectAttributes.addFlashAttribute("success", "Profil mis à jour avec succès !");
 
 		return "redirect:/profiles/" + id + "/edit";
 	}
 
-	/**
-	 * Supprimer un profil
-	 */
-	@PostMapping("/{id}/delete")
-	public String deleteProfile(@PathVariable UUID id, Authentication auth, RedirectAttributes redirectAttributes) {
+	// =========================================================================
+	// US-022 : PUBLICATION RAPIDE CV / PORTFOLIO
+	// =========================================================================
 
+	@PostMapping("/profiles/{id}/toggle-portfolio")
+	public String togglePortfolioPublication(@PathVariable UUID id, Authentication auth,
+			RedirectAttributes redirectAttributes) {
+		User currentUser = (User) auth.getPrincipal();
 		Profile profile = profileService.getProfileById(id);
 
-		if (profile == null) {
-			redirectAttributes.addFlashAttribute("error", "Profil introuvable.");
+		if (profile == null || !profile.getOwner().getId().equals(currentUser.getId())) {
 			return "redirect:/dashboard";
 		}
 
-		User currentUser = (User) auth.getPrincipal();
-		if (!profile.getOwner().getId().equals(currentUser.getId())) {
-			redirectAttributes.addFlashAttribute("error", "Vous n'avez pas le droit de supprimer ce profil.");
-			return "redirect:/profiles/user/" + currentUser.getId();
-		}
+		// Toggle publication Portfolio
+		boolean newState = !profile.isPortfolioPublished();
+		profile.setIsPublishedPortfolio(newState);
+		profileService.saveProfile(profile);
 
-		try {
-			String profileName = profile.getName();
-			profileService.deleteProfile(id);
-			redirectAttributes.addFlashAttribute("success", "Le profil \"" + profileName + "\" a ete supprime.");
+		String message = newState ? "Portfolio publié !" : "Portfolio dépublié.";
+		redirectAttributes.addFlashAttribute("success", message);
 
-		} catch (Exception e) {
-			redirectAttributes.addFlashAttribute("error", "Erreur lors de la suppression : " + e.getMessage());
-		}
-
-		return "redirect:/profiles/user/" + currentUser.getId();
+		return "redirect:/profiles/" + id + "/edit";
 	}
 
-	/**
-	 * Generer un slug unique
-	 */
-	private String generateSlug(String name, UUID userId) {
-		String baseSlug = name.toLowerCase().replaceAll("[^a-z0-9\\s-]", "").replaceAll("\\s+", "-")
-				.replaceAll("-+", "-").replaceAll("^-|-$", "");
+	@PostMapping("/profiles/{id}/toggle-cv")
+	public String toggleCvPublication(@PathVariable UUID id, Authentication auth,
+			RedirectAttributes redirectAttributes) {
+		User currentUser = (User) auth.getPrincipal();
+		Profile profile = profileService.getProfileById(id);
 
-		if (baseSlug.length() > 50) {
-			baseSlug = baseSlug.substring(0, 50);
+		if (profile == null || !profile.getOwner().getId().equals(currentUser.getId())) {
+			return "redirect:/dashboard";
 		}
 
-		String suffix = userId.toString().substring(0, 8);
+		// Toggle publication CV
+		boolean newState = !profile.isCvPublished();
+		profile.setIsPublishedCv(newState);
+		profileService.saveProfile(profile);
 
-		return baseSlug + "-" + suffix;
+		String message = newState ? "CV publié !" : "CV dépublié.";
+		redirectAttributes.addFlashAttribute("success", message);
+
+		return "redirect:/profiles/" + id + "/edit";
+	}
+
+	// =========================================================================
+	// US-021 : PRÉVISUALISATION (mode Portfolio ou CV)
+	// =========================================================================
+
+	@GetMapping("/profiles/{id}/preview")
+	public ModelAndView previewProfile(@PathVariable UUID id, @RequestParam(defaultValue = "portfolio") String mode,
+			Authentication auth) {
+		User currentUser = (User) auth.getPrincipal();
+		Profile profile = profileService.getProfileById(id);
+
+		if (profile == null || !profile.getOwner().getId().equals(currentUser.getId())) {
+			return new ModelAndView("redirect:/dashboard");
+		}
+
+		// Charger les rubriques visibles avec leurs éléments
+		List<Rubric> rubrics = rubricService.getVisibleRubricsByProfile(id);
+		for (Rubric rubric : rubrics) {
+			List<Element> elements = elementService.getElementsByRubric(rubric.getId());
+			rubric.setElements(elements);
+		}
+
+		// US-026 : Choisir le template selon le mode
+		String templateName = "cv".equals(mode) ? "preview/cv" : "preview/portfolio";
+
+		ModelAndView mv = new ModelAndView(templateName);
+		mv.addObject("profile", profile);
+		mv.addObject("rubrics", rubrics);
+		mv.addObject("owner", profile.getOwner());
+		mv.addObject("viewMode", mode);
+		mv.addObject("isPreview", true);
+		return mv;
+	}
+
+	// =========================================================================
+	// SUPPRESSION DE PROFIL - US-010
+	// =========================================================================
+
+	@PostMapping("/profiles/{id}/delete")
+	public String deleteProfile(@PathVariable UUID id, Authentication auth, RedirectAttributes redirectAttributes) {
+		User currentUser = (User) auth.getPrincipal();
+		Profile profile = profileService.getProfileById(id);
+
+		if (profile == null || !profile.getOwner().getId().equals(currentUser.getId())) {
+			return "redirect:/dashboard";
+		}
+
+		String profileName = profile.getName();
+		profileService.deleteProfile(id);
+		redirectAttributes.addFlashAttribute("success", "Profil '" + profileName + "' supprimé.");
+
+		return "redirect:/dashboard";
 	}
 }

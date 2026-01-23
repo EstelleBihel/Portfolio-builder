@@ -1,0 +1,131 @@
+{{> partials/header }}
+
+<div class="ui middle aligned center aligned grid" style="min-height: 80vh;">
+    <div class="column" style="max-width: 500px;">
+        
+        <div class="ui segment" style="border-radius: 15px; box-shadow: 0 15px 35px rgba(0,0,0,0.1); padding: 40px;">
+            <div style="text-align: center; margin-bottom: 30px;">
+                <i class="user plus icon" style="font-size: 3em; color: #667eea;"></i>
+                <h1 style="color: #333; margin: 15px 0 0 0;">Creer un compte</h1>
+                <p style="color: #666; margin-top: 10px;">Rejoignez Portfolio Builder</p>
+            </div>
+
+            <!-- Message d'erreur -->
+            {{#error}}
+            <div class="ui negative message">
+                <i class="close icon"></i>
+                <div class="header">Erreur</div>
+                <p>{{error}}</p>
+            </div>
+            {{/error}}
+
+            <!-- Message de succes -->
+            {{#success}}
+            <div class="ui positive message">
+                <i class="close icon"></i>
+                <div class="header">Succes !</div>
+                <p>{{success}}</p>
+            </div>
+            {{/success}}
+
+            <form class="ui form" action="/users/register" method="POST" id="registerForm">
+                <div class="two fields">
+                    <div class="field required">
+                        <label>Prenom</label>
+                        <input type="text" name="firstname" placeholder="Votre prenom" required maxlength="50" value="{{firstname}}">
+                    </div>
+                    <div class="field required">
+                        <label>Nom</label>
+                        <input type="text" name="lastname" placeholder="Votre nom" required maxlength="50" value="{{lastname}}">
+                    </div>
+                </div>
+                
+                <div class="field required">
+                    <label>Nom d'utilisateur</label>
+                    <div class="ui left icon input">
+                        <i class="user icon"></i>
+                        <input type="text" name="username" placeholder="Choisissez un pseudo" required maxlength="30" value="{{username}}">
+                    </div>
+                    <small style="color: #999;">Entre 3 et 30 caracteres, sans espaces</small>
+                </div>
+                
+                <div class="field required">
+                    <label>Email</label>
+                    <div class="ui left icon input">
+                        <i class="envelope icon"></i>
+                        <input type="email" name="email" placeholder="votre@email.com" required maxlength="100" value="{{email}}">
+                    </div>
+                </div>
+                
+                <div class="field required">
+                    <label>Mot de passe</label>
+                    <div class="ui left icon input">
+                        <i class="lock icon"></i>
+                        <input type="password" name="password" placeholder="Minimum 6 caracteres" required minlength="6" maxlength="100">
+                    </div>
+                    <small style="color: #999;">Minimum 6 caracteres</small>
+                </div>
+                
+                <div class="field required">
+                    <label>Confirmer le mot de passe</label>
+                    <div class="ui left icon input">
+                        <i class="lock icon"></i>
+                        <input type="password" name="confirmPassword" placeholder="Repetez le mot de passe" required minlength="6" maxlength="100">
+                    </div>
+                </div>
+
+                <button type="submit" class="ui primary fluid large button" style="margin-top: 20px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+                    <i class="user plus icon"></i> Creer mon compte
+                </button>
+            </form>
+
+            <div class="ui divider"></div>
+
+            <div style="text-align: center;">
+                <p style="color: #666;">Vous avez deja un compte ?</p>
+                <a href="/login" class="ui basic button">
+                    <i class="sign in icon"></i> Se connecter
+                </a>
+            </div>
+        </div>
+        
+    </div>
+</div>
+
+<script>
+$(document).ready(function() {
+    // Fermer les messages
+    $('.message .close').on('click', function() {
+        $(this).closest('.message').transition('fade');
+    });
+
+    // Validation du formulaire
+    $('#registerForm').on('submit', function(e) {
+        var password = $('input[name="password"]').val();
+        var confirmPassword = $('input[name="confirmPassword"]').val();
+        var username = $('input[name="username"]').val();
+
+        if (password !== confirmPassword) {
+            e.preventDefault();
+            alert('Les mots de passe ne correspondent pas.');
+            return false;
+        }
+
+        if (username.indexOf(' ') !== -1) {
+            e.preventDefault();
+            alert('Le nom d\'utilisateur ne peut pas contenir d\'espaces.');
+            return false;
+        }
+
+        if (username.length < 3) {
+            e.preventDefault();
+            alert('Le nom d\'utilisateur doit contenir au moins 3 caracteres.');
+            return false;
+        }
+
+        return true;
+    });
+});
+</script>
+
+{{> partials/footer }}

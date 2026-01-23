@@ -1,37 +1,105 @@
 <!-- Navigation principale -->
-<div class="ui secondary pointing menu" style="margin-bottom: 30px; border-bottom: 2px solid #e0e0e0;">
-    
-    <a class="item {{#isHome}}active{{/isHome}}" href="/">
-        <i class="briefcase icon" style="color: #667eea;"></i>
-        <span style="font-weight: bold; color: #667eea;">Portfolio Builder</span>
+<nav class="ui secondary menu" style="
+    background: white;
+    margin: -30px -30px 30px -30px;
+    padding: 15px 30px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+    border-radius: 0;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+">
+    <!-- Logo -->
+    <a class="item" href="/" style="padding: 8px 15px;">
+        <div style="
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 8px 12px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+        ">
+            <i class="briefcase icon" style="color: white; margin: 0; font-size: 1.2em;"></i>
+            <span style="color: white; font-weight: 700; font-size: 1.1em;">Portfolio Builder</span>
+        </div>
     </a>
     
     {{#activeUser}}
-    <a class="item {{#isDashboard}}active{{/isDashboard}}" href="/dashboard">
-        <i class="dashboard icon"></i> Dashboard
+    <!-- Menu utilisateur connecte -->
+    <a class="item {{#isDashboard}}active{{/isDashboard}}" href="/dashboard" style="font-weight: 500;">
+        <i class="dashboard icon" style="color: #667eea;"></i> Dashboard
     </a>
-    <a class="item {{#isProfiles}}active{{/isProfiles}}" href="/profiles/user/{{activeUser.id}}">
-        <i class="folder icon"></i> Mes Profils
-    </a>
-    <a class="item {{#isUsers}}active{{/isUsers}}" href="/users">
-        <i class="users icon"></i> Utilisateurs
+    <a class="item {{#isProfiles}}active{{/isProfiles}}" href="/profiles/user/{{activeUser.id}}" style="font-weight: 500;">
+        <i class="folder icon" style="color: #ed8936;"></i> Mes Profils
     </a>
     
+    <!-- Lien Utilisateurs visible UNIQUEMENT pour les admins -->
+    {{#activeUser.admin}}
+    <a class="item {{#isUsers}}active{{/isUsers}}" href="/users" style="font-weight: 500;">
+        <i class="users icon" style="color: #48bb78;"></i> Utilisateurs
+    </a>
+    {{/activeUser.admin}}
+    
     <div class="right menu">
-        <div class="ui dropdown item">
-            <i class="user circle icon"></i> {{activeUser.firstname}} {{activeUser.lastname}}
-            <i class="dropdown icon"></i>
-            <div class="menu">
+        <div class="ui dropdown item" style="font-weight: 500;">
+            <div style="
+                display: flex;
+                align-items: center;
+                gap: 10px;
+                background: #f7fafc;
+                padding: 8px 15px;
+                border-radius: 25px;
+            ">
+                <div style="
+                    width: 32px;
+                    height: 32px;
+                    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+                    border-radius: 50%;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    color: white;
+                    font-weight: 700;
+                    font-size: 0.9em;
+                ">{{activeUser.initials}}</div>
+                <span>{{activeUser.firstname}}</span>
+                {{#activeUser.admin}}
+                <span class="ui tiny red label" style="margin-left: 5px;">Admin</span>
+                {{/activeUser.admin}}
+                <i class="dropdown icon" style="margin-left: 5px;"></i>
+            </div>
+            <div class="menu" style="margin-top: 10px !important; min-width: 200px;">
+                <div class="header" style="padding: 15px;">
+                    <strong>{{activeUser.firstname}} {{activeUser.lastname}}</strong>
+                    <div style="color: #718096; font-size: 0.85em; margin-top: 3px;">
+                        @{{activeUser.username}}
+                    </div>
+                    {{#activeUser.admin}}
+                    <div style="margin-top: 5px;">
+                        <span class="ui tiny red label">Administrateur</span>
+                    </div>
+                    {{/activeUser.admin}}
+                </div>
+                <div class="divider"></div>
                 <a class="item" href="/users/{{activeUser.id}}">
-                    <i class="id card icon"></i> Voir mon profil
+                    <i class="user icon" style="color: #667eea;"></i> Mon compte
                 </a>
                 <a class="item" href="/users/{{activeUser.id}}/edit">
                     <i class="edit icon"></i> Modifier mes infos
                 </a>
+                <a class="item" href="/profiles/user/{{activeUser.id}}">
+                    <i class="folder icon"></i> Mes profils
+                </a>
+                {{#activeUser.admin}}
                 <div class="divider"></div>
-                <a class="item" onclick="document.getElementById('logout-form').submit();">
-                    <i class="sign out icon" style="color: #db2828;"></i> 
-                    <span style="color: #db2828;">Deconnexion</span>
+                <a class="item" href="/users">
+                    <i class="users icon" style="color: #48bb78;"></i> Gestion utilisateurs
+                </a>
+                {{/activeUser.admin}}
+                <div class="divider"></div>
+                <a class="item" onclick="document.getElementById('logout-form').submit();" style="color: #f56565 !important; cursor: pointer;">
+                    <i class="sign out icon"></i> Deconnexion
                 </a>
             </div>
         </div>
@@ -39,20 +107,36 @@
     {{/activeUser}}
     
     {{^activeUser}}
+    <!-- Menu visiteur -->
     <div class="right menu">
-        <a class="item" href="/login">
-            <i class="sign in icon"></i> Connexion
+        <a class="item" href="/login" style="font-weight: 500;">
+            <i class="sign in icon" style="color: #667eea;"></i> Connexion
         </a>
-        <a class="item" href="/users/register">
-            <i class="user plus icon" style="color: #f2711c;"></i> 
-            <span style="color: #f2711c; font-weight: bold;">Inscription</span>
-        </a>
+        <div class="item">
+            <a href="/users/register" class="ui button" style="
+                background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+                color: white;
+                border-radius: 25px;
+                padding: 10px 25px;
+                font-weight: 600;
+                box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+            ">
+                <i class="user plus icon"></i> S'inscrire
+            </a>
+        </div>
     </div>
     {{/activeUser}}
-</div>
+</nav>
 
 {{#activeUser}}
 <form id="logout-form" action="/logout" method="POST" style="display: none;"></form>
 {{/activeUser}}
 
-<script>$(document).ready(function() { $('.ui.dropdown').dropdown(); });</script>
+<script>
+$(document).ready(function() {
+    $('.ui.dropdown').dropdown({
+        transition: 'fade up',
+        duration: 200
+    });
+});
+</script>

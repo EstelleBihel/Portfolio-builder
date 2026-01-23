@@ -6,54 +6,78 @@ import java.util.UUID;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
-import lombok.Data;
-import lombok.Getter;
-import lombok.Setter;
-import lombok.ToString;
+import jakarta.persistence.OrderBy;
+import jakarta.persistence.Table;
 
-@Getter
-@Setter
 @Entity
-@Data
+@Table(name = "profile")
 public class Profile {
 
 	@Id
-	private UUID id = UUID.randomUUID();
+	@GeneratedValue(strategy = GenerationType.UUID)
+	private UUID id;
 
-	@Column(length = 65)
+	@Column(nullable = false, length = 100)
 	private String name;
 
-	@Column(length = 10400)
+	@Column(columnDefinition = "TEXT")
 	private String description;
 
-	@Column(nullable = true)
-	private Boolean isPublished = false;
-
-	@Column(nullable = true, unique = true)
+	@Column(unique = true, length = 150)
 	private String slug;
 
-	// CORRECTION : Pas de cascade sur la relation vers User
-	// On ne veut PAS supprimer l'utilisateur quand on supprime un profil !
-	@ManyToOne(optional = false, fetch = FetchType.LAZY)
+	// === EPIC 4 ===
+
+	// Profil publié en mode Portfolio (vue détaillée avec projets) URL publique :
+	// /p/{slug}
+	@Column(name = "is_published_portfolio", nullable = false)
+	private Boolean isPublishedPortfolio = false;
+
+	// Profil publié en mode CV (vue épurée, focus parcours) URL publique :
+	// /cv/{slug}
+	@Column(name = "is_published_cv", nullable = false)
+	private Boolean isPublishedCv = false;
+
+	// === FIN NOUVEAUX CHAMPS ===
+
+	@ManyToOne
+	@JoinColumn(name = "owner_id", nullable = false)
 	private User owner;
 
-	// Les rubriques sont supprimees en cascade quand le profil est supprime
 	@OneToMany(mappedBy = "profile", cascade = CascadeType.ALL, orphanRemoval = true)
-	@ToString.Exclude
+	@OrderBy("displayOrder ASC")
 	private List<Rubric> rubrics;
 
-	// Getters et Setters explicites (en plus de Lombok pour compatibilite)
+	// === GETTERS ET SETTERS ===
 
-	public Boolean isPublished() {
-		return isPublished;
+	public UUID getId() {
+		return id;
 	}
 
-	public void setPublished(Boolean published) {
-		isPublished = published;
+	public void setId(UUID id) {
+		this.id = id;
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	public String getDescription() {
+		return description;
+	}
+
+	public void setDescription(String description) {
+		this.description = description;
 	}
 
 	public String getSlug() {
@@ -64,16 +88,67 @@ public class Profile {
 		this.slug = slug;
 	}
 
-	public void setOwner(User user) {
-		this.owner = user;
+	public Boolean getIsPublishedPortfolio() {
+		return isPublishedPortfolio;
+	}
+
+	public void setIsPublishedPortfolio(Boolean isPublishedPortfolio) {
+		this.isPublishedPortfolio = isPublishedPortfolio;
+	}
+
+	public Boolean getIsPublishedCv() {
+		return isPublishedCv;
+	}
+
+	public void setIsPublishedCv(Boolean isPublishedCv) {
+		this.isPublishedCv = isPublishedCv;
 	}
 
 	public User getOwner() {
 		return owner;
 	}
 
-	// Methode utilitaire
-	public int getRubricsCount() {
-		return rubrics != null ? rubrics.size() : 0;
+	public void setOwner(User owner) {
+		this.owner = owner;
+	}
+
+	public List<Rubric> getRubrics() {
+		return rubrics;
+	}
+
+	public void setRubrics(List<Rubric> rubrics) {
+		this.rubrics = rubrics;
+	}
+
+	// === MÉTHODES UTILITAIRES POUR MUSTACHE ===
+
+	// Le profil est-il publié (au moins une vue) ?
+	public boolean isPublished() {
+		return Boolean.TRUE.equals(isPublishedPortfolio) || Boolean.TRUE.equals(isPublishedCv);
+	}
+
+	// Le profil est-il en brouillon (aucune vue publiée) ?
+	public boolean isDraft() {
+		return !isPublished();
+	}
+
+	// URL publique du Portfolio
+	public String getPortfolioUrl() {
+		return "/p/" + slug;
+	}
+
+	// URL publique du CV
+	public String getCvUrl() {
+		return "/cv/" + slug;
+	}
+
+	// Le portfolio est-il publié ?
+	public boolean isPortfolioPublished() {
+		return Boolean.TRUE.equals(isPublishedPortfolio);
+	}
+
+	// Le CV est-il publié ?
+	public boolean isCvPublished() {
+		return Boolean.TRUE.equals(isPublishedCv);
 	}
 }

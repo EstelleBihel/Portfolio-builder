@@ -1,0 +1,167 @@
+{{> partials/header }}
+{{> partials/navbar }}
+
+<!-- Header -->
+<div class="ui segment page-header">
+    <div class="ui grid">
+        <div class="twelve wide column">
+            <h1 class="ui inverted header" style="margin-bottom: 5px;">
+                <i class="edit icon"></i>
+                Modifier l'element
+            </h1>
+            <p style="color: rgba(255,255,255,0.9);">
+                Rubrique : <a href="/rubrics/{{rubric.id}}/edit" style="color: white; text-decoration: underline;">{{rubric.name}}</a>
+            </p>
+        </div>
+        <div class="four wide column right aligned middle aligned">
+            <a href="/rubrics/{{rubric.id}}/edit" class="ui inverted button">
+                <i class="arrow left icon"></i> Retour
+            </a>
+        </div>
+    </div>
+</div>
+
+<!-- Messages -->
+{{#success}}
+<div class="ui positive message">
+    <i class="close icon"></i>
+    <p>{{success}}</p>
+</div>
+{{/success}}
+
+{{#error}}
+<div class="ui negative message">
+    <i class="close icon"></i>
+    <p>{{error}}</p>
+</div>
+{{/error}}
+
+<div class="ui grid">
+    <div class="ten wide column">
+        <div class="ui segment">
+            <h3 class="ui header">
+                <i class="edit icon" style="color: #667eea;"></i>
+                <div class="content">
+                    Informations de l'element
+                </div>
+            </h3>
+            <div class="ui divider"></div>
+            
+            <form class="ui form" action="/elements/{{element.id}}/update" method="POST">
+                <div class="field required">
+                    <label>Titre</label>
+                    <input type="text" name="title" value="{{element.title}}" required maxlength="100">
+                </div>
+                
+                <div class="field">
+                    <label>Sous-titre</label>
+                    <input type="text" name="subtitle" value="{{element.subtitle}}" placeholder="Ex: Entreprise, Ecole..." maxlength="100">
+                </div>
+                
+                <div class="two fields">
+                    <div class="field">
+                        <label>Date debut</label>
+                        <input type="text" name="startDate" value="{{element.startDate}}" placeholder="Ex: Jan 2023" maxlength="50">
+                    </div>
+                    <div class="field">
+                        <label>Date fin</label>
+                        <input type="text" name="endDate" value="{{element.endDate}}" placeholder="Ex: Present" maxlength="50">
+                    </div>
+                </div>
+                
+                <div class="field">
+                    <label>Lieu</label>
+                    <input type="text" name="location" value="{{element.location}}" placeholder="Ex: Paris, France" maxlength="255">
+                </div>
+                
+                <div class="field">
+                    <label>Description</label>
+                    <textarea name="description" rows="5" placeholder="Description detaillee...">{{element.description}}</textarea>
+                </div>
+                
+                <div class="field">
+                    <label>Lien (optionnel)</label>
+                    <input type="url" name="link" value="{{element.link}}" placeholder="https://..." maxlength="500">
+                </div>
+                
+                <div class="ui divider"></div>
+                
+                <div class="ui buttons">
+                    <button type="submit" class="ui primary button">
+                        <i class="save icon"></i> Enregistrer
+                    </button>
+                    <a href="/rubrics/{{rubric.id}}/edit" class="ui button">
+                        Annuler
+                    </a>
+                </div>
+            </form>
+        </div>
+    </div>
+    
+    <div class="six wide column">
+        <!-- Apercu -->
+        <div class="ui segment">
+            <h3 class="ui header">
+                <i class="eye icon" style="color: #48bb78;"></i>
+                <div class="content">
+                    Apercu
+                </div>
+            </h3>
+            <div class="ui divider"></div>
+            
+            <div style="background: #f7fafc; padding: 20px; border-radius: 10px;">
+                <h4 style="margin: 0 0 5px 0; color: #2d3748;">{{element.title}}</h4>
+                {{#element.subtitle}}
+                <p style="color: #667eea; margin: 0 0 5px 0; font-weight: 500;">{{element.subtitle}}</p>
+                {{/element.subtitle}}
+                {{#element.hasPeriod}}
+                <p style="color: #718096; margin: 0 0 5px 0; font-size: 0.9em;">
+                    <i class="calendar icon"></i> {{element.period}}
+                </p>
+                {{/element.hasPeriod}}
+                {{#element.location}}
+                <p style="color: #718096; margin: 0 0 5px 0; font-size: 0.9em;">
+                    <i class="map marker icon"></i> {{element.location}}
+                </p>
+                {{/element.location}}
+                {{#element.description}}
+                <p style="color: #4a5568; margin: 10px 0 0 0; font-size: 0.95em; line-height: 1.5;">
+                    {{element.description}}
+                </p>
+                {{/element.description}}
+                {{#element.hasLink}}
+                <p style="margin: 10px 0 0 0;">
+                    <a href="{{element.link}}" target="_blank" style="color: #667eea;">
+                        <i class="external link icon"></i> Voir le lien
+                    </a>
+                </p>
+                {{/element.hasLink}}
+            </div>
+        </div>
+        
+        <!-- Zone de danger -->
+        <div class="ui red segment">
+            <h3 class="ui header" style="color: #db2828;">
+                <i class="exclamation triangle icon"></i>
+                Zone de danger
+            </h3>
+            <div class="ui divider"></div>
+            
+            <form action="/elements/{{element.id}}/delete" method="POST" onsubmit="return confirm('Supprimer cet element ?');">
+                <button type="submit" class="ui fluid red button">
+                    <i class="trash icon"></i> Supprimer l'element
+                </button>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+$(document).ready(function() {
+    $('.message .close').on('click', function() {
+        $(this).closest('.message').transition('fade');
+    });
+});
+</script>
+
+{{> partials/footer }}

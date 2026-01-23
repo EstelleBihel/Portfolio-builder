@@ -1,0 +1,101 @@
+{{> partials/header }}
+
+<!-- Barre de prévisualisation -->
+<div style="background: linear-gradient(135deg, #60a5fa 0%, #3b82f6 100%); padding: 12px 20px; position: sticky; top: 0; z-index: 100;">
+    <div style="max-width: 1200px; margin: 0 auto; display: flex; align-items: center; justify-content: space-between;">
+        <span style="font-weight: 600; color: white;">
+            👁️ Mode prévisualisation - CV
+        </span>
+        <div style="display: flex; gap: 8px;">
+            <a href="/profiles/{{profile.id}}/preview?mode=portfolio" style="padding: 6px 12px; background: white; color: #374151; border-radius: 6px; text-decoration: none; font-size: 14px;">
+                📁 Voir en mode Portfolio
+            </a>
+            <a href="/profiles/{{profile.id}}/edit" style="padding: 6px 12px; background: #1f2937; color: white; border-radius: 6px; text-decoration: none; font-size: 14px;">
+                ← Retour à l'édition
+            </a>
+        </div>
+    </div>
+</div>
+
+<!-- Contenu CV -->
+<div style="min-height: 100vh; background: #e5e7eb; padding: 30px; display: flex; justify-content: center;">
+    <div style="background: white; width: 100%; max-width: 800px; min-height: 1100px; padding: 50px; box-shadow: 0 4px 24px rgba(0,0,0,0.15);">
+
+        <!-- En-tête CV -->
+        <header style="display: flex; justify-content: space-between; align-items: flex-start; padding-bottom: 20px; border-bottom: 3px solid #1f2937; margin-bottom: 25px;">
+            <div>
+                <h1 style="margin: 0; font-size: 2rem; color: #1f2937; text-transform: uppercase; letter-spacing: 0.05em;">
+                    {{owner.firstname}} {{owner.lastname}}
+                </h1>
+                <p style="margin: 8px 0 0 0; color: #667eea; font-size: 1.1rem; font-weight: 500;">
+                    {{profile.name}}
+                </p>
+            </div>
+            <div style="text-align: right;">
+                {{#owner.email}}
+                <span style="display: block; font-size: 0.875rem; color: #4b5563; margin-bottom: 4px;">
+                    ✉️ {{owner.email}}
+                </span>
+                {{/owner.email}}
+            </div>
+        </header>
+
+        {{#profile.description}}
+        <section style="background: #f8fafc; padding: 16px 20px; border-left: 4px solid #667eea; margin-bottom: 30px;">
+            <p style="margin: 0; color: #4b5563; font-style: italic; line-height: 1.6;">
+                {{profile.description}}
+            </p>
+        </section>
+        {{/profile.description}}
+
+        <!-- Rubriques -->
+        {{#rubrics}}
+        <section style="margin-bottom: 30px;">
+            <h2 style="font-size: 1rem; text-transform: uppercase; letter-spacing: 0.1em; color: #1f2937; background: #f3f4f6; padding: 8px 12px; margin: 0 0 16px 0; border-left: 4px solid #667eea;">
+                {{name}}
+            </h2>
+
+            <div style="padding-left: 12px;">
+                {{#elements}}
+                <div style="margin-bottom: 20px; padding-bottom: 20px; border-bottom: 1px solid #e5e7eb;">
+                    <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 8px;">
+                        <div>
+                            <h3 style="margin: 0; font-size: 1rem; color: #1f2937;">{{title}}</h3>
+                            {{#subtitle}}
+                            <p style="margin: 4px 0 0 0; color: #667eea; font-weight: 500; font-size: 0.9rem;">{{subtitle}}</p>
+                            {{/subtitle}}
+                        </div>
+                        <div style="text-align: right; flex-shrink: 0;">
+                            {{#startDate}}
+                            <span style="display: block; font-size: 0.8rem; color: #6b7280; font-weight: 500;">
+                                {{startDate}} {{#endDate}}- {{endDate}}{{/endDate}}
+                            </span>
+                            {{/startDate}}
+                            {{#location}}
+                            <span style="display: block; font-size: 0.75rem; color: #9ca3af;">{{location}}</span>
+                            {{/location}}
+                        </div>
+                    </div>
+                    {{#description}}
+                    <p style="margin: 8px 0 0 0; font-size: 0.875rem; color: #4b5563; line-height: 1.6;">{{description}}</p>
+                    {{/description}}
+                </div>
+                {{/elements}}
+            </div>
+
+            {{^elements}}
+            <p style="color: #9ca3af; font-style: italic; padding-left: 12px;">-</p>
+            {{/elements}}
+        </section>
+        {{/rubrics}}
+
+        {{^rubrics}}
+        <div style="text-align: center; padding: 50px; color: #6b7280;">
+            <p>Ce CV ne contient pas encore de contenu.</p>
+        </div>
+        {{/rubrics}}
+
+    </div>
+</div>
+
+{{> partials/footer }}

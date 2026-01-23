@@ -5,13 +5,331 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Portfolio Builder</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fomantic-ui/2.9.4/semantic.min.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/fomantic-ui/2.9.4/semantic.min.js"></script>
-    <link rel="stylesheet" href="/styles.css">
+    
     <style>
-        body { min-height: 100vh; display: flex; flex-direction: column; }
-        .main-content { flex: 1; }
+        /* ========== VARIABLES GLOBALES ========== */
+        :root {
+            --primary-color: #667eea;
+            --primary-dark: #5a67d8;
+            --secondary-color: #764ba2;
+            --accent-color: #f093fb;
+            --success-color: #48bb78;
+            --warning-color: #ed8936;
+            --danger-color: #f56565;
+            --gradient-primary: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --gradient-accent: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            --gradient-success: linear-gradient(135deg, #48bb78 0%, #38a169 100%);
+            --text-dark: #2d3748;
+            --text-muted: #718096;
+            --bg-light: #f7fafc;
+            --bg-card: #ffffff;
+            --shadow-sm: 0 1px 3px rgba(0,0,0,0.08);
+            --shadow-md: 0 4px 15px rgba(0,0,0,0.1);
+            --shadow-lg: 0 15px 35px rgba(0,0,0,0.15);
+            --shadow-colored: 0 10px 30px rgba(102, 126, 234, 0.3);
+            --radius-sm: 8px;
+            --radius-md: 12px;
+            --radius-lg: 20px;
+            --transition: all 0.3s ease;
+        }
+
+        /* ========== BASE ========== */
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', 'Segoe UI', system-ui, -apple-system, sans-serif;
+            background: var(--bg-light);
+            color: var(--text-dark);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            margin: 0;
+        }
+
+        /* ========== CONTAINER PRINCIPAL ========== */
+        .ui.container.main-content {
+            flex: 1;
+            padding: 30px 0;
+        }
+
+        /* ========== SEGMENTS / CARTES ========== */
+        .ui.segment {
+            border: none !important;
+            border-radius: var(--radius-md) !important;
+            box-shadow: var(--shadow-sm);
+            transition: var(--transition);
+        }
+
+        .ui.segment:hover {
+            box-shadow: var(--shadow-md);
+        }
+
+        /* Header gradient pour les pages */
+        .page-header {
+            background: var(--gradient-primary) !important;
+            border-radius: var(--radius-lg) !important;
+            padding: 35px 40px !important;
+            margin-bottom: 30px !important;
+            box-shadow: var(--shadow-colored);
+        }
+
+        .page-header h1 {
+            margin: 0 0 8px 0;
+            font-weight: 700;
+        }
+
+        .page-header p {
+            margin: 0;
+            opacity: 0.9;
+        }
+
+        /* ========== BOUTONS ========== */
+        .ui.button {
+            border-radius: var(--radius-sm) !important;
+            transition: var(--transition);
+            font-weight: 600;
+        }
+
+        .ui.button:hover {
+            transform: translateY(-2px);
+        }
+
+        .ui.primary.button {
+            background: var(--gradient-primary) !important;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .ui.primary.button:hover {
+            box-shadow: var(--shadow-colored);
+        }
+
+        .ui.inverted.button:hover {
+            background: rgba(255,255,255,0.15) !important;
+        }
+
+        /* ========== FORMULAIRES ========== */
+        .ui.form .field > label {
+            color: var(--text-dark);
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        .ui.form input[type="text"],
+        .ui.form input[type="email"],
+        .ui.form input[type="password"],
+        .ui.form input[type="number"],
+        .ui.form textarea,
+        .ui.form select,
+        .ui.input > input {
+            border-radius: var(--radius-sm) !important;
+            border: 2px solid #e2e8f0 !important;
+            transition: var(--transition);
+        }
+
+        .ui.form input:focus,
+        .ui.form textarea:focus,
+        .ui.input > input:focus {
+            border-color: var(--primary-color) !important;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.15) !important;
+        }
+
+        /* ========== MESSAGES ========== */
+        .ui.message {
+            border-radius: var(--radius-md) !important;
+            box-shadow: var(--shadow-sm);
+            border: none !important;
+        }
+
+        .ui.positive.message {
+            background: linear-gradient(135deg, #c6f6d5 0%, #9ae6b4 100%) !important;
+        }
+
+        .ui.negative.message {
+            background: linear-gradient(135deg, #fed7d7 0%, #feb2b2 100%) !important;
+        }
+
+        .ui.warning.message {
+            background: linear-gradient(135deg, #fefcbf 0%, #faf089 100%) !important;
+        }
+
+        .ui.info.message {
+            background: linear-gradient(135deg, #bee3f8 0%, #90cdf4 100%) !important;
+        }
+
+        /* ========== STATISTIQUES CARDS ========== */
+        .stat-card {
+            border-radius: var(--radius-md) !important;
+            padding: 25px !important;
+            text-align: center;
+            transition: var(--transition);
+            border: none !important;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .stat-card.primary {
+            background: var(--gradient-primary) !important;
+            color: white !important;
+            box-shadow: var(--shadow-colored);
+        }
+
+        .stat-card.success {
+            background: var(--gradient-success) !important;
+            color: white !important;
+        }
+
+        .stat-card.warning {
+            background: linear-gradient(135deg, #ed8936 0%, #dd6b20 100%) !important;
+            color: white !important;
+        }
+
+        .stat-card h1, .stat-card h2 {
+            font-size: 2.5em;
+            margin: 0 0 5px 0;
+            font-weight: 700;
+        }
+
+        .stat-card p {
+            margin: 0;
+            opacity: 0.9;
+            font-weight: 500;
+        }
+
+        /* ========== TABLE ========== */
+        .ui.table {
+            border-radius: var(--radius-md) !important;
+            overflow: hidden;
+            box-shadow: var(--shadow-sm);
+            border: none !important;
+        }
+
+        .ui.table thead th {
+            background: var(--bg-light) !important;
+            color: var(--text-dark);
+            font-weight: 600;
+            border: none !important;
+        }
+
+        .ui.table tbody tr:hover {
+            background: rgba(102, 126, 234, 0.05) !important;
+        }
+
+        /* ========== MODALS ========== */
+        .ui.modal {
+            border-radius: var(--radius-lg) !important;
+        }
+
+        .ui.modal > .header {
+            border-radius: var(--radius-lg) var(--radius-lg) 0 0 !important;
+            background: var(--bg-light) !important;
+            border: none !important;
+        }
+
+        .ui.modal > .content {
+            border: none !important;
+        }
+
+        .ui.modal > .actions {
+            border: none !important;
+            background: var(--bg-light) !important;
+            border-radius: 0 0 var(--radius-lg) var(--radius-lg) !important;
+        }
+
+        /* ========== DROPDOWN ========== */
+        .ui.dropdown .menu {
+            border-radius: var(--radius-md) !important;
+            box-shadow: var(--shadow-lg) !important;
+            border: none !important;
+        }
+
+        .ui.dropdown .menu > .item {
+            transition: var(--transition);
+        }
+
+        .ui.dropdown .menu > .item:hover {
+            background: rgba(102, 126, 234, 0.1) !important;
+        }
+
+        /* ========== LABELS ========== */
+        .ui.label {
+            border-radius: var(--radius-sm) !important;
+        }
+
+        /* ========== DIVIDER ========== */
+        .ui.divider {
+            border-color: #e2e8f0 !important;
+        }
+
+        /* ========== ANIMATIONS ========== */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+
+        .animate-fade-in {
+            animation: fadeInUp 0.5s ease forwards;
+        }
+
+        .animate-delay-1 { animation-delay: 0.1s; opacity: 0; }
+        .animate-delay-2 { animation-delay: 0.2s; opacity: 0; }
+        .animate-delay-3 { animation-delay: 0.3s; opacity: 0; }
+
+        /* ========== UTILITIES ========== */
+        .text-gradient {
+            background: var(--gradient-primary);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .text-muted {
+            color: var(--text-muted) !important;
+        }
+
+        .icon-primary { color: var(--primary-color) !important; }
+        .icon-success { color: var(--success-color) !important; }
+        .icon-warning { color: var(--warning-color) !important; }
+        .icon-danger { color: var(--danger-color) !important; }
+
+        /* ========== PLACEHOLDER SEGMENTS ========== */
+        .ui.placeholder.segment {
+            background: white !important;
+            border: 2px dashed #e2e8f0 !important;
+            box-shadow: none !important;
+        }
+
+        .ui.placeholder.segment:hover {
+            border-color: var(--primary-color) !important;
+        }
+
+        /* ========== CHECKBOX TOGGLE ========== */
+        .ui.toggle.checkbox label:before {
+            border-radius: 20px !important;
+        }
+
+        .ui.toggle.checkbox input:checked ~ label:before {
+            background: var(--gradient-primary) !important;
+        }
     </style>
 </head>
 <body>
+
 <div class="ui container main-content">

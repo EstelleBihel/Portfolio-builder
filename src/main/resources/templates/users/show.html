@@ -1,20 +1,144 @@
-{{ > partials/header }}
+{{> partials/header }}
+{{> partials/navbar }}
 
-<h1>Détail de l’utilisateur</h1>
-
-<div class="card">
-    <p><span class="label">Prénom :</span> {{user.firstname}}</p>
-    <p><span class="label">Nom :</span> {{user.lastname}}</p>
-    <p><span class="label">Nom d’utilisateur :</span> {{user.username}}</p>
-    <p><span class="label">Email :</span> {{user.email}}</p>
-    <p><span class="label">ID :</span> {{user.id}}</p>
+<!-- En-tete de la page -->
+<div class="ui segment" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border: none; border-radius: 10px; margin-bottom: 30px;">
+    <div class="ui grid">
+        <div class="twelve wide column">
+            <h1 class="ui inverted header" style="margin-bottom: 5px;">
+                <i class="user icon"></i>
+                Mon Compte
+            </h1>
+            <p style="color: rgba(255,255,255,0.9); font-size: 1.1em;">
+                Informations de votre compte utilisateur
+            </p>
+        </div>
+        <div class="four wide column right aligned middle aligned">
+            <a href="/users/{{user.id}}/edit" class="ui inverted button">
+                <i class="edit icon"></i> Modifier
+            </a>
+        </div>
+    </div>
 </div>
 
-<div class="actions">
-    <p>
-        <a href="/users">⬅ Retour à la liste</a> |
-        <a href="/users/create">➕ Créer un nouvel utilisateur</a>
-    </p>
+<!-- Message de succes -->
+{{#success}}
+<div class="ui positive message">
+    <i class="close icon"></i>
+    <div class="header">Succes !</div>
+    <p>{{success}}</p>
+</div>
+{{/success}}
+
+<div class="ui grid">
+    <div class="ten wide column">
+        <!-- Informations personnelles -->
+        <div class="ui segment">
+            <h3 class="ui header">
+                <i class="id card icon" style="color: #667eea;"></i>
+                Informations personnelles
+            </h3>
+            <div class="ui divider"></div>
+            
+            <div class="ui list" style="font-size: 1.1em;">
+                <div class="item" style="padding: 15px 0; border-bottom: 1px solid #eee;">
+                    <div class="ui grid">
+                        <div class="four wide column">
+                            <strong style="color: #666;">Prenom</strong>
+                        </div>
+                        <div class="twelve wide column">
+                            {{user.firstname}}
+                        </div>
+                    </div>
+                </div>
+                <div class="item" style="padding: 15px 0; border-bottom: 1px solid #eee;">
+                    <div class="ui grid">
+                        <div class="four wide column">
+                            <strong style="color: #666;">Nom</strong>
+                        </div>
+                        <div class="twelve wide column">
+                            {{user.lastname}}
+                        </div>
+                    </div>
+                </div>
+                <div class="item" style="padding: 15px 0; border-bottom: 1px solid #eee;">
+                    <div class="ui grid">
+                        <div class="four wide column">
+                            <strong style="color: #666;">Nom d'utilisateur</strong>
+                        </div>
+                        <div class="twelve wide column">
+                            <code style="background: #f5f5f5; padding: 3px 8px; border-radius: 4px;">{{user.username}}</code>
+                        </div>
+                    </div>
+                </div>
+                <div class="item" style="padding: 15px 0;">
+                    <div class="ui grid">
+                        <div class="four wide column">
+                            <strong style="color: #666;">Email</strong>
+                        </div>
+                        <div class="twelve wide column">
+                            <a href="mailto:{{user.email}}">{{user.email}}</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="six wide column">
+        <!-- Statistiques -->
+        <div class="ui segment">
+            <h3 class="ui header">
+                <i class="chart bar icon" style="color: #667eea;"></i>
+                Statistiques
+            </h3>
+            <div class="ui divider"></div>
+            
+            <div class="ui statistics" style="display: flex; flex-direction: column; gap: 20px;">
+                <div class="statistic" style="margin: 0;">
+                    <div class="value" style="color: #667eea;">
+                        {{profileCount}}
+                    </div>
+                    <div class="label">Profils crees</div>
+                </div>
+                <div class="statistic" style="margin: 0;">
+                    <div class="value" style="color: #21ba45;">
+                        {{publishedCount}}
+                    </div>
+                    <div class="label">Profils publies</div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Actions rapides -->
+        <div class="ui segment">
+            <h3 class="ui header">
+                <i class="lightning icon" style="color: #667eea;"></i>
+                Actions
+            </h3>
+            <div class="ui divider"></div>
+            
+            <div class="ui vertical fluid buttons">
+                <a href="/users/{{user.id}}/edit" class="ui button">
+                    <i class="edit icon"></i> Modifier mes informations
+                </a>
+                <a href="/users/{{user.id}}/password" class="ui button">
+                    <i class="lock icon"></i> Changer mon mot de passe
+                </a>
+                <a href="/profiles/user/{{user.id}}" class="ui button">
+                    <i class="folder icon"></i> Voir mes profils
+                </a>
+            </div>
+        </div>
+    </div>
 </div>
 
-{{ > partials/footer }}
+<script>
+$(document).ready(function() {
+    $('.message .close').on('click', function() {
+        $(this).closest('.message').transition('fade');
+    });
+});
+</script>
+
+{{> partials/footer }}

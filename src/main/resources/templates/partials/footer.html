@@ -1,33 +1,156 @@
 </div><!-- Fin main-content -->
 
-<div class="ui inverted vertical footer segment" style="margin-top: 50px; padding: 40px 0;">
+<!-- Footer -->
+<footer style="
+    background: linear-gradient(135deg, #1a202c 0%, #2d3748 100%);
+    color: white;
+    padding: 50px 0 30px 0;
+    margin-top: auto;
+">
     <div class="ui container">
-        <div class="ui stackable inverted divided equal height grid">
+        <div class="ui stackable grid">
+            <!-- Logo et description -->
             <div class="six wide column">
-                <h4 class="ui inverted header">
-                    <i class="briefcase icon"></i> Portfolio Builder
-                </h4>
-                <p style="color: rgba(255,255,255,0.7);">
-                    Creez et gerez vos profils professionnels en ligne.
+                <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 20px;">
+                    <div style="
+                        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+                        padding: 10px;
+                        border-radius: 12px;
+                        box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+                    ">
+                        <i class="briefcase icon" style="color: white; margin: 0; font-size: 1.3em;"></i>
+                    </div>
+                    <span style="font-weight: 700; font-size: 1.3em;">Portfolio Builder</span>
+                </div>
+                <p style="color: #a0aec0; line-height: 1.7; margin-bottom: 20px;">
+                    Creez et partagez vos portfolios professionnels en quelques clics. 
+                    Un projet realise dans le cadre du BTS SIO.
                 </p>
-            </div>
-            <div class="five wide column">
-                <h4 class="ui inverted header">Navigation</h4>
-                <div class="ui inverted link list">
-                    <a href="/" class="item">Accueil</a>
-                    <a href="/dashboard" class="item">Dashboard</a>
-                    <a href="/users" class="item">Utilisateurs</a>
+                <div style="display: flex; gap: 10px;">
+                    <a href="#" style="
+                        width: 38px;
+                        height: 38px;
+                        background: rgba(255,255,255,0.1);
+                        border-radius: 10px;
+                        display: flex;
+                        align-items: center;
+                        justify-content: center;
+                        color: white;
+                        transition: all 0.3s ease;
+                    " onmouseover="this.style.background='#667eea'" onmouseout="this.style.background='rgba(255,255,255,0.1)'">
+                        <i class="github icon" style="margin: 0;"></i>
+                    </a>
+                    <a href="#" style="
+                        width: 38px;
+                        height: 38px;
+                        background: rgba(255,255,255,0.1);
+                        border-radius: 10px;
+                        display: flex;
+                        align-items: center;
+                        justify-content: center;
+                        color: white;
+                        transition: all 0.3s ease;
+                    " onmouseover="this.style.background='#667eea'" onmouseout="this.style.background='rgba(255,255,255,0.1)'">
+                        <i class="linkedin icon" style="margin: 0;"></i>
+                    </a>
                 </div>
             </div>
-            <div class="five wide column">
-                <h4 class="ui inverted header">Projet BTS SIO</h4>
-                <p style="color: rgba(255,255,255,0.7);">
-                    Spring Boot + JPA + Mustache
-                </p>
+            
+            <!-- Navigation -->
+            <div class="three wide column">
+                <h4 style="color: white; margin-bottom: 20px; font-weight: 600;">Navigation</h4>
+                <div style="display: flex; flex-direction: column; gap: 12px;">
+                    <a href="/" style="color: #a0aec0; transition: all 0.3s ease;" onmouseover="this.style.color='#667eea'" onmouseout="this.style.color='#a0aec0'">
+                        <i class="home icon"></i> Accueil
+                    </a>
+                    <a href="/dashboard" style="color: #a0aec0; transition: all 0.3s ease;" onmouseover="this.style.color='#667eea'" onmouseout="this.style.color='#a0aec0'">
+                        <i class="dashboard icon"></i> Dashboard
+                    </a>
+                    <a href="/users" style="color: #a0aec0; transition: all 0.3s ease;" onmouseover="this.style.color='#667eea'" onmouseout="this.style.color='#a0aec0'">
+                        <i class="users icon"></i> Utilisateurs
+                    </a>
+                </div>
+            </div>
+            
+            <!-- Ressources -->
+            <div class="three wide column">
+                <h4 style="color: white; margin-bottom: 20px; font-weight: 600;">Ressources</h4>
+                <div style="display: flex; flex-direction: column; gap: 12px;">
+                    <a href="#" style="color: #a0aec0; transition: all 0.3s ease;" onmouseover="this.style.color='#667eea'" onmouseout="this.style.color='#a0aec0'">
+                        <i class="book icon"></i> Documentation
+                    </a>
+                    <a href="#" style="color: #a0aec0; transition: all 0.3s ease;" onmouseover="this.style.color='#667eea'" onmouseout="this.style.color='#a0aec0'">
+                        <i class="question circle icon"></i> FAQ
+                    </a>
+                    <a href="#" style="color: #a0aec0; transition: all 0.3s ease;" onmouseover="this.style.color='#667eea'" onmouseout="this.style.color='#a0aec0'">
+                        <i class="envelope icon"></i> Contact
+                    </a>
+                </div>
+            </div>
+            
+            <!-- Technologies -->
+            <div class="four wide column">
+                <h4 style="color: white; margin-bottom: 20px; font-weight: 600;">Technologies</h4>
+                <div style="display: flex; flex-wrap: wrap; gap: 8px;">
+                    <span style="
+                        background: rgba(255,255,255,0.1);
+                        padding: 6px 12px;
+                        border-radius: 20px;
+                        font-size: 0.85em;
+                        color: #a0aec0;
+                    ">Spring Boot</span>
+                    <span style="
+                        background: rgba(255,255,255,0.1);
+                        padding: 6px 12px;
+                        border-radius: 20px;
+                        font-size: 0.85em;
+                        color: #a0aec0;
+                    ">JPA</span>
+                    <span style="
+                        background: rgba(255,255,255,0.1);
+                        padding: 6px 12px;
+                        border-radius: 20px;
+                        font-size: 0.85em;
+                        color: #a0aec0;
+                    ">Mustache</span>
+                    <span style="
+                        background: rgba(255,255,255,0.1);
+                        padding: 6px 12px;
+                        border-radius: 20px;
+                        font-size: 0.85em;
+                        color: #a0aec0;
+                    ">MySQL</span>
+                    <span style="
+                        background: rgba(255,255,255,0.1);
+                        padding: 6px 12px;
+                        border-radius: 20px;
+                        font-size: 0.85em;
+                        color: #a0aec0;
+                    ">Semantic UI</span>
+                </div>
             </div>
         </div>
+        
+        <!-- Copyright -->
+        <div style="
+            border-top: 1px solid rgba(255,255,255,0.1);
+            margin-top: 40px;
+            padding-top: 25px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 15px;
+        ">
+            <p style="color: #718096; margin: 0; font-size: 0.9em;">
+                &copy; {{currentYear}} Portfolio Builder. Projet BTS SIO SLAM.
+            </p>
+            <p style="color: #718096; margin: 0; font-size: 0.9em;">
+                Fait avec <i class="heart icon" style="color: #f56565;"></i> par Adrien Pennequin
+            </p>
+        </div>
     </div>
-</div>
+</footer>
 
 </body>
 </html>

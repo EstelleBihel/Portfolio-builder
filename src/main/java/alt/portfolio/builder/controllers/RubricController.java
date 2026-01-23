@@ -15,16 +15,15 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import alt.portfolio.builder.entities.Profile;
 import alt.portfolio.builder.entities.Rubric;
 import alt.portfolio.builder.entities.User;
+import alt.portfolio.builder.services.ElementService;
 import alt.portfolio.builder.services.ProfileService;
 import alt.portfolio.builder.services.RubricService;
 
-/**
- * Controleur pour la gestion des rubriques US-012 : Ajouter une rubrique US-013
- * : Modifier une rubrique US-014 : Supprimer une rubrique US-015 : Reorganiser
- * les rubriques US-016 : Rendre une rubrique visible/invisible
- */
+//Controleur pour la gestion des rubriques
 @Controller
 public class RubricController {
+	@Autowired
+	private ElementService elementService;
 
 	@Autowired
 	private RubricService rubricService;
@@ -32,10 +31,8 @@ public class RubricController {
 	@Autowired
 	private ProfileService profileService;
 
-	/**
-	 * US-012 : Ajouter une rubrique a un profil POST
-	 * /profiles/{profileId}/rubrics/add
-	 */
+	// US-012 : Ajouter une rubrique a un profil POST
+	// /profiles/{profileId}/rubrics/add*/
 	@PostMapping("/profiles/{profileId}/rubrics/add")
 	public String addRubric(@PathVariable UUID profileId, @RequestParam String name,
 			@RequestParam(required = false) String type, @RequestParam(required = false) String content,
@@ -80,10 +77,8 @@ public class RubricController {
 		return "redirect:/profiles/" + profileId + "/edit";
 	}
 
-	/**
-	 * US-013 : Afficher le formulaire de modification d'une rubrique GET
-	 * /rubrics/{id}/edit
-	 */
+	// US-013 : Afficher le formulaire de modification d'une rubrique GET
+	// rubrics/{id}/edit MISE A JOUR : Inclut maintenant les elements
 	@GetMapping("/rubrics/{id}/edit")
 	public ModelAndView editRubricForm(@PathVariable UUID id, Authentication auth) {
 		Rubric rubric = rubricService.getRubricById(id);
@@ -101,12 +96,15 @@ public class RubricController {
 		ModelAndView mv = new ModelAndView("rubrics/edit");
 		mv.addObject("rubric", rubric);
 		mv.addObject("profile", rubric.getProfile());
+
+		// US-017-020 : Ajouter les elements
+		mv.addObject("elements", elementService.getElementsByRubric(id));
+		mv.addObject("elementCount", elementService.countByRubric(id));
+
 		return mv;
 	}
 
-	/**
-	 * US-013 : Enregistrer la modification d'une rubrique POST /rubrics/{id}/update
-	 */
+	// US-013 : Enregistrer la modification d'une rubrique POST /rubrics/{id}/update
 	@PostMapping("/rubrics/{id}/update")
 	public String updateRubric(@PathVariable UUID id, @RequestParam String name,
 			@RequestParam(required = false) String type, @RequestParam(required = false) String content,
@@ -159,9 +157,7 @@ public class RubricController {
 		return "redirect:/profiles/" + rubric.getProfile().getId() + "/edit";
 	}
 
-	/**
-	 * US-014 : Supprimer une rubrique POST /rubrics/{id}/delete
-	 */
+	// US-014 : Supprimer une rubrique POST /rubrics/{id}/delete
 	@PostMapping("/rubrics/{id}/delete")
 	public String deleteRubric(@PathVariable UUID id, Authentication auth, RedirectAttributes redirectAttributes) {
 
@@ -192,10 +188,8 @@ public class RubricController {
 		return "redirect:/profiles/" + profileId + "/edit";
 	}
 
-	/**
-	 * US-016 : Changer la visibilite d'une rubrique POST
-	 * /rubrics/{id}/toggle-visibility
-	 */
+	// US-016 : Changer la visibilite d'une rubrique POST
+	// /rubrics/{id}/toggle-visibility
 	@PostMapping("/rubrics/{id}/toggle-visibility")
 	public String toggleVisibility(@PathVariable UUID id, Authentication auth, RedirectAttributes redirectAttributes) {
 
@@ -222,9 +216,7 @@ public class RubricController {
 		return "redirect:/profiles/" + rubric.getProfile().getId() + "/edit";
 	}
 
-	/**
-	 * US-015 : Deplacer une rubrique vers le haut POST /rubrics/{id}/move-up
-	 */
+	// US-015 : Deplacer une rubrique vers le haut POST /rubrics/{id}/move-up
 	@PostMapping("/rubrics/{id}/move-up")
 	public String moveUp(@PathVariable UUID id, Authentication auth) {
 		Rubric rubric = rubricService.getRubricById(id);
@@ -241,9 +233,7 @@ public class RubricController {
 		return "redirect:/profiles/" + rubric.getProfile().getId() + "/edit";
 	}
 
-	/**
-	 * US-015 : Deplacer une rubrique vers le bas POST /rubrics/{id}/move-down
-	 */
+	// US-015 : Deplacer une rubrique vers le bas POST /rubrics/{id}/move-down
 	@PostMapping("/rubrics/{id}/move-down")
 	public String moveDown(@PathVariable UUID id, Authentication auth) {
 		Rubric rubric = rubricService.getRubricById(id);

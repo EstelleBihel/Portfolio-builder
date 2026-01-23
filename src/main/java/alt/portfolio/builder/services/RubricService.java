@@ -12,9 +12,7 @@ import alt.portfolio.builder.entities.Rubric;
 import alt.portfolio.builder.repositories.ProfileRepository;
 import alt.portfolio.builder.repositories.RubricRepository;
 
-/**
- * Service pour la gestion des rubriques
- */
+//Service pour la gestion des rubriques
 @Service
 public class RubricService {
 
@@ -24,38 +22,28 @@ public class RubricService {
 	@Autowired
 	private ProfileRepository profileRepository;
 
-	/**
-	 * Recuperer toutes les rubriques d'un profil
-	 */
+	// Recuperer toutes les rubriques d'un profil
 	public List<Rubric> getRubricsByProfile(UUID profileId) {
 		return rubricRepository.findByProfileIdOrderByDisplayOrderAsc(profileId);
 	}
 
-	/**
-	 * Recuperer les rubriques visibles d'un profil
-	 */
+	// Recuperer les rubriques visibles d'un profil
 	public List<Rubric> getVisibleRubricsByProfile(UUID profileId) {
 		return rubricRepository.findByProfileIdAndVisibleTrueOrderByDisplayOrderAsc(profileId);
 	}
 
-	/**
-	 * Recuperer une rubrique par son ID
-	 */
+	// Recuperer une rubrique par son ID
 	public Rubric getRubricById(UUID id) {
 		return rubricRepository.findById(id).orElse(null);
 	}
 
-	/**
-	 * Creer une nouvelle rubrique
-	 */
+	// Creer une nouvelle rubrique
 	@Transactional
 	public Rubric createRubric(UUID profileId, String name) {
 		return createRubric(profileId, name, "AUTRE", null);
 	}
 
-	/**
-	 * Creer une nouvelle rubrique avec type
-	 */
+	// Creer une nouvelle rubrique avec type
 	@Transactional
 	public Rubric createRubric(UUID profileId, String name, String type, String content) {
 		Profile profile = profileRepository.findById(profileId)
@@ -76,31 +64,23 @@ public class RubricService {
 		return rubricRepository.save(rubric);
 	}
 
-	/**
-	 * Sauvegarder une rubrique (creation ou mise a jour)
-	 */
+	// Sauvegarder une rubrique (creation ou mise a jour)
 	public Rubric saveRubric(Rubric rubric) {
 		return rubricRepository.save(rubric);
 	}
 
-	/**
-	 * Supprimer une rubrique
-	 */
+	// Supprimer une rubrique
 	@Transactional
 	public void deleteRubric(UUID id) {
 		rubricRepository.deleteById(id);
 	}
 
-	/**
-	 * Compter les rubriques d'un profil
-	 */
+	// Compter les rubriques d'un profil
 	public long countRubricsByProfile(UUID profileId) {
 		return rubricRepository.countByProfileId(profileId);
 	}
 
-	/**
-	 * Changer la visibilite d'une rubrique
-	 */
+	// Changer la visibilite d'une rubrique
 	@Transactional
 	public void toggleVisibility(UUID id) {
 		Rubric rubric = rubricRepository.findById(id).orElse(null);
@@ -110,9 +90,7 @@ public class RubricService {
 		}
 	}
 
-	/**
-	 * Deplacer une rubrique vers le haut
-	 */
+	// Deplacer une rubrique vers le haut
 	@Transactional
 	public void moveUp(UUID id) {
 		Rubric rubric = rubricRepository.findById(id).orElse(null);
@@ -130,9 +108,7 @@ public class RubricService {
 		}
 	}
 
-	/**
-	 * Deplacer une rubrique vers le bas
-	 */
+	// Deplacer une rubrique vers le bas
 	@Transactional
 	public void moveDown(UUID id) {
 		Rubric rubric = rubricRepository.findById(id).orElse(null);
