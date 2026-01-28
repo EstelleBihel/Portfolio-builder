@@ -20,7 +20,6 @@ import alt.portfolio.builder.entities.User;
 import alt.portfolio.builder.services.ElementService;
 import alt.portfolio.builder.services.ProfileService;
 import alt.portfolio.builder.services.RubricService;
-import alt.portfolio.builder.services.UserService;
 
 //Controleur pour la gestion des profils EPIC 4 : Publication et partage
 @Controller
@@ -28,9 +27,6 @@ public class ProfileController {
 
 	@Autowired
 	private ProfileService profileService;
-
-	@Autowired
-	private UserService userService;
 
 	@Autowired
 	private RubricService rubricService;

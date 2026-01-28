@@ -12,11 +12,14 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import alt.portfolio.builder.entities.User;
+import alt.portfolio.builder.exceptions.EntityNotFoundException;
 import alt.portfolio.builder.repositories.UserRepository;
+import alt.portfolio.builder.services.FileStorageService;
 import alt.portfolio.builder.services.ProfileService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -34,18 +37,23 @@ public class AccountController {
 	@Autowired
 	private ProfileService profileService;
 
+	@Autowired
+	private FileStorageService fileStorageService;
+
+	private static final long MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB
+
 	// US-004 : Voir mon profil utilisateur
 	@GetMapping("/users/{id}")
 	public ModelAndView showAccount(@PathVariable UUID id, Authentication auth) {
 		User currentUser = (User) auth.getPrincipal();
 
-		// Verifier que l'utilisateur consulte son propre compte
+		// Vérifier que l'utilisateur existe
+		User user = userRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Utilisateur", id));
+
+		// Vérifier que l'utilisateur consulte son propre compte
 		if (!currentUser.getId().equals(id)) {
 			return new ModelAndView("redirect:/users/" + currentUser.getId());
 		}
-
-		// Recharger l'utilisateur depuis la base pour avoir les donnees a jour
-		User user = userRepository.findById(id).orElse(currentUser);
 
 		ModelAndView mv = new ModelAndView("users/show");
 		mv.addObject("user", user);
@@ -59,11 +67,13 @@ public class AccountController {
 	public ModelAndView editAccount(@PathVariable UUID id, Authentication auth) {
 		User currentUser = (User) auth.getPrincipal();
 
+		// Vérifier que l'utilisateur existe
+		User user = userRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Utilisateur", id));
+
+		// Vérifier que c'est son propre compte
 		if (!currentUser.getId().equals(id)) {
 			return new ModelAndView("redirect:/users/" + currentUser.getId() + "/edit");
 		}
-
-		User user = userRepository.findById(id).orElse(currentUser);
 
 		ModelAndView mv = new ModelAndView("users/edit");
 		mv.addObject("user", user);
@@ -76,6 +86,9 @@ public class AccountController {
 			@RequestParam String email, Authentication auth, RedirectAttributes redirectAttributes) {
 
 		User currentUser = (User) auth.getPrincipal();
+
+		// Vérifier que l'utilisateur existe
+		User user = userRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Utilisateur", id));
 
 		if (!currentUser.getId().equals(id)) {
 			redirectAttributes.addFlashAttribute("error", "Vous ne pouvez pas modifier un autre compte.");
@@ -115,7 +128,6 @@ public class AccountController {
 		}
 
 		try {
-			User user = userRepository.findById(id).orElseThrow();
 			user.setFirstname(firstname);
 			user.setLastname(lastname);
 			user.setEmail(email);
@@ -134,11 +146,12 @@ public class AccountController {
 	public ModelAndView showPasswordForm(@PathVariable UUID id, Authentication auth) {
 		User currentUser = (User) auth.getPrincipal();
 
+		// Vérifier que l'utilisateur existe
+		User user = userRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Utilisateur", id));
+
 		if (!currentUser.getId().equals(id)) {
 			return new ModelAndView("redirect:/users/" + currentUser.getId() + "/password");
 		}
-
-		User user = userRepository.findById(id).orElse(currentUser);
 
 		ModelAndView mv = new ModelAndView("users/password");
 		mv.addObject("user", user);
@@ -155,13 +168,15 @@ public class AccountController {
 
 		User currentUser = (User) auth.getPrincipal();
 
+		// Vérifier que l'utilisateur existe
+		User user = userRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Utilisateur", id));
+
 		if (!currentUser.getId().equals(id)) {
 			redirectAttributes.addFlashAttribute("error", "Vous ne pouvez pas modifier un autre compte.");
 			return "redirect:/users/" + currentUser.getId();
 		}
 
 		// Verifier le mot de passe actuel
-		User user = userRepository.findById(id).orElseThrow();
 		if (!passwordEncoder.matches(currentPassword, user.getPassword())) {
 			redirectAttributes.addFlashAttribute("error", "Le mot de passe actuel est incorrect.");
 			return "redirect:/users/" + id + "/password";
@@ -199,6 +214,9 @@ public class AccountController {
 
 		User currentUser = (User) auth.getPrincipal();
 
+		// Vérifier que l'utilisateur existe
+		userRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Utilisateur", id));
+
 		if (!currentUser.getId().equals(id)) {
 			redirectAttributes.addFlashAttribute("error", "Vous ne pouvez pas supprimer un autre compte.");
 			return "redirect:/users/" + currentUser.getId();
@@ -218,5 +236,81 @@ public class AccountController {
 					"Erreur lors de la suppression du compte : " + e.getMessage());
 			return "redirect:/users/" + id + "/edit";
 		}
+	}
+
+	/**
+	 * US-030 : Uploader une photo de profil
+	 */
+	@PostMapping("/users/{id}/avatar/upload")
+	public String uploadAvatar(@PathVariable UUID id, @RequestParam("avatar") MultipartFile file, Authentication auth,
+			RedirectAttributes redirectAttributes) {
+
+		User currentUser = (User) auth.getPrincipal();
+
+		// Vérifier que l'utilisateur existe
+		User user = userRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Utilisateur", id));
+
+		if (!currentUser.getId().equals(id)) {
+			return "redirect:/users/" + currentUser.getId();
+		}
+
+		// Vérifier que c'est une image valide
+		if (!fileStorageService.isValidImage(file)) {
+			redirectAttributes.addFlashAttribute("error", "Format invalide. Utilisez JPG, PNG, GIF ou WebP.");
+			return "redirect:/users/" + id + "/edit";
+		}
+
+		// Vérifier la taille
+		if (!fileStorageService.isValidSize(file, MAX_FILE_SIZE)) {
+			redirectAttributes.addFlashAttribute("error", "Fichier trop volumineux. Maximum 5 Mo.");
+			return "redirect:/users/" + id + "/edit";
+		}
+
+		try {
+			// Supprimer l'ancien avatar si existe
+			if (user.getAvatarUrl() != null) {
+				fileStorageService.deleteFile(user.getAvatarUrl());
+			}
+
+			// Sauvegarder le nouveau fichier
+			String avatarUrl = fileStorageService.storeFile(file, "avatars");
+			user.setAvatarUrl(avatarUrl);
+			userRepository.save(user);
+
+			redirectAttributes.addFlashAttribute("success", "Photo de profil mise à jour !");
+		} catch (Exception e) {
+			redirectAttributes.addFlashAttribute("error", "Erreur lors de l'upload : " + e.getMessage());
+		}
+
+		return "redirect:/users/" + id + "/edit";
+	}
+
+	/**
+	 * US-030 : Supprimer la photo de profil
+	 */
+	@PostMapping("/users/{id}/avatar/delete")
+	public String deleteAvatar(@PathVariable UUID id, Authentication auth, RedirectAttributes redirectAttributes) {
+
+		User currentUser = (User) auth.getPrincipal();
+
+		// Vérifier que l'utilisateur existe
+		User user = userRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Utilisateur", id));
+
+		if (!currentUser.getId().equals(id)) {
+			return "redirect:/users/" + currentUser.getId();
+		}
+
+		try {
+			if (user.getAvatarUrl() != null) {
+				fileStorageService.deleteFile(user.getAvatarUrl());
+				user.setAvatarUrl(null);
+				userRepository.save(user);
+				redirectAttributes.addFlashAttribute("success", "Photo de profil supprimée.");
+			}
+		} catch (Exception e) {
+			redirectAttributes.addFlashAttribute("error", "Erreur : " + e.getMessage());
+		}
+
+		return "redirect:/users/" + id + "/edit";
 	}
 }

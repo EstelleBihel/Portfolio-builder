@@ -25,6 +25,11 @@ import lombok.Setter;
 @Table(name = "users")
 public class User implements UserDetails {
 
+	private static final long serialVersionUID = 1L;
+
+	@Column(name = "avatar_url", length = 255)
+	private String avatarUrl;
+
 	@Id
 	private UUID id = UUID.randomUUID();
 

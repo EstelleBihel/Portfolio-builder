@@ -25,6 +25,9 @@ public class SecurityConfig {
 				.requestMatchers("/users/register", "/users/register/**").permitAll()
 				.requestMatchers("/css/**", "/js/**", "/img/**", "/styles.css").permitAll()
 				.requestMatchers("/p/**", "/cv/**").permitAll()
+				.requestMatchers("/", "/login", "/register", "/css/**", "/js/**", "/images/**", "/uploads/**", "/p/**",
+						"/cv/**")
+				.permitAll()
 				// Routes ADMIN uniquement
 				.requestMatchers("/users").hasRole("ADMIN").requestMatchers("/users/*/delete").hasRole("ADMIN")
 				// Toutes les autres routes necessitent une authentification

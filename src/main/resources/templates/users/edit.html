@@ -93,6 +93,48 @@
     </div>
     
     <div class="six wide column">
+        <!-- US-030 : Photo de profil -->
+        <div class="ui segment">
+            <h3 class="ui header">
+                <i class="camera icon" style="color: #667eea;"></i>
+                Photo de profil
+            </h3>
+            <div class="ui divider"></div>
+            
+            <div style="text-align: center; padding: 10px 0;">
+                <!-- Avatar actuel -->
+                {{#user.avatarUrl}}
+                <img src="{{user.avatarUrl}}" alt="Avatar" 
+                     style="width: 120px; height: 120px; border-radius: 50%; object-fit: cover; border: 4px solid #667eea; margin-bottom: 15px;">
+                {{/user.avatarUrl}}
+                {{^user.avatarUrl}}
+                <div style="width: 120px; height: 120px; border-radius: 50%; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); display: flex; align-items: center; justify-content: center; margin: 0 auto 15px auto; color: white; font-size: 2.5rem; font-weight: 700;">
+                    {{user.initials}}
+                </div>
+                {{/user.avatarUrl}}
+                
+                <!-- Formulaire upload -->
+                <form action="/users/{{user.id}}/avatar/upload" method="POST" enctype="multipart/form-data">
+                    <label for="avatar" class="ui primary button" style="cursor: pointer;">
+                        <i class="upload icon"></i> Choisir une photo
+                    </label>
+                    <input type="file" id="avatar" name="avatar" accept="image/*" style="display: none;" onchange="this.form.submit()">
+                </form>
+                <p style="color: #999; font-size: 0.85em; margin-top: 10px;">
+                    JPG, PNG, GIF ou WebP. Max 5 Mo.
+                </p>
+                
+                <!-- Bouton supprimer (si avatar existe) -->
+                {{#user.avatarUrl}}
+                <form action="/users/{{user.id}}/avatar/delete" method="POST" style="margin-top: 10px;">
+                    <button type="submit" class="ui basic red small button" onclick="return confirm('Supprimer votre photo de profil ?')">
+                        <i class="trash icon"></i> Supprimer
+                    </button>
+                </form>
+                {{/user.avatarUrl}}
+            </div>
+        </div>
+        
         <!-- Changer le mot de passe -->
         <div class="ui segment">
             <h3 class="ui header">
