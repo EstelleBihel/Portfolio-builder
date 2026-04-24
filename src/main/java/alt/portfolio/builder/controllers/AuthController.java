@@ -158,4 +158,10 @@ public class AuthController {
 			return "redirect:/users/register";
 		}
 	}
+
+	// Afficher le formulaire de connexion
+	@GetMapping("/login")
+	public ModelAndView showLoginForm() {
+		return new ModelAndView("users/formLogin");
+	}
 }
