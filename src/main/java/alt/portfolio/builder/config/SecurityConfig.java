@@ -11,6 +11,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 
+import alt.portfolio.builder.repositories.UserRepository;
 import alt.portfolio.builder.services.DbUserService;
 
 @Configuration
@@ -45,8 +46,9 @@ public class SecurityConfig {
 
 	@Primary
 	@Bean
-	UserDetailsService getUserDetailsService() {
-		return new DbUserService();
+	UserDetailsService getUserDetailsService(UserRepository userRepository, PasswordEncoder passwordEncoder) {
+		DbUserService service = new DbUserService();
+		return service;
 	}
 
 	@Bean
