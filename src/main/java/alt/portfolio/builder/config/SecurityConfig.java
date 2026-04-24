@@ -32,9 +32,9 @@ public class SecurityConfig {
 				.requestMatchers("/users").hasRole("ADMIN").requestMatchers("/users/*/delete").hasRole("ADMIN")
 				// Toutes les autres routes necessitent une authentification
 				.anyRequest().authenticated())
-				.formLogin(form -> form.loginPage("/login").loginProcessingUrl("/login").usernameParameter("username")
-						.passwordParameter("password").defaultSuccessUrl("/dashboard", true)
-						.failureUrl("/login?error=true").permitAll())
+				.formLogin(form -> form.loginPage("/login").loginProcessingUrl("/perform_login")
+						.usernameParameter("username").passwordParameter("password")
+						.defaultSuccessUrl("/dashboard", true).failureUrl("/login?error=true").permitAll())
 				.logout(logout -> logout.logoutUrl("/logout").logoutSuccessUrl("/login?logout=true")
 						.invalidateHttpSession(true).deleteCookies("JSESSIONID").permitAll())
 				// Page d'erreur pour acces refuse
