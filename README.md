@@ -341,7 +341,7 @@ Distribué sous la licence MIT. Voir `LICENSE` pour plus d'informations.
 
 **Estelle BIHEL**
 
-- 🎓 BTS SIO SLAM - Lycée Laplace, Caen
+- 🎓 BTS SIO SLAM - CaenSup
 - 📧 estelle.bihel@sts-sio-caen.info
 - 🔗 [GitHub](https://github.com/EstelleBihel)
 
