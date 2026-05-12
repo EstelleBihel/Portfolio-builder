@@ -51,7 +51,10 @@ public class RubricService {
 
 		// Determiner l'ordre d'affichage (dernier + 1)
 		Rubric lastRubric = rubricRepository.findFirstByProfileIdOrderByDisplayOrderDesc(profileId);
-		int newOrder = (lastRubric != null) ? lastRubric.getDisplayOrder() + 1 : 0;
+		int newOrder = 0;
+		if (lastRubric != null && lastRubric.getDisplayOrder() != null) {
+			newOrder = lastRubric.getDisplayOrder() + 1;
+		}
 
 		Rubric rubric = new Rubric();
 		rubric.setName(name);
