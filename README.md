@@ -100,19 +100,21 @@
 
 ## Architecture
 
-portfolio-builder
-├──  src/main/java/alt/portfolio/builder
-│   ├──  application          # Advice, Exceptions
-│   ├──  config               # SecurityConfig, WebConfig
-│   ├──  controllers          # Spring MVC Controllers
-│   ├──  entities             # JPA Entities (User, Profile, Rubric, Element, Category, Location)
-│   ├──  repositories         # Spring Data JPA
-│   └──  services             # Business Logic
-├──  src/main/resources
-│   ├──  templates            # Mustache Templates
-│   ├──  static               # CSS, JS, Images
-│   └──  application.properties
-└──  pom.xml
+```
+portfolio-builder/
+├── src/main/java/alt/portfolio/builder/
+│   ├── application/        # Advice, Exceptions
+│   ├── config/             # SecurityConfig, WebConfig
+│   ├── controllers/        # Spring MVC Controllers
+│   ├── entities/           # JPA Entities (User, Profile, Rubric, Element, Category, Location)
+│   ├── repositories/       # Spring Data JPA
+│   └── services/           # Business Logic
+├── src/main/resources/
+│   ├── templates/          # Mustache Templates
+│   ├── static/             # CSS, JS, Images
+│   └── application.properties
+└── pom.xml
+```
 
 ### Stack Technique
 
