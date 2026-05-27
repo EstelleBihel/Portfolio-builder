@@ -27,7 +27,6 @@
 - [Documentation](#documentation)
 - [Tests](#tests)
 - [Comptes de démonstration](#comptes-de-démonstration)
-- [License](#license)
 
 ---
 
