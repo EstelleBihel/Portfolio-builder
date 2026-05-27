@@ -53,10 +53,10 @@
                     <input type="text" name="title" value="{{element.title}}" required maxlength="100">
                 </div>
                 
-                <div class="field">
-                    <label>Sous-titre</label>
-                    <input type="text" name="subtitle" value="{{element.subtitle}}" placeholder="Ex: Entreprise, Ecole..." maxlength="100">
-                </div>
+				<div class="field">
+				    <label>Lieu</label>
+				    <input type="text" name="location" value="{{element.locationEntity.name}}" placeholder="Ex: Paris, France" maxlength="255">
+				</div>
                 
                 <div class="two fields">
                     <div class="field">
@@ -71,7 +71,7 @@
                 
                 <div class="field">
                     <label>Lieu</label>
-                    <input type="text" name="location" value="{{element.location}}" placeholder="Ex: Paris, France" maxlength="255">
+                    <input type="text" name="location" value="{{element.locationEntity.name}}" placeholder="Ex: Paris, France" maxlength="255">
                 </div>
                 
                 <div class="field">
@@ -119,11 +119,11 @@
                     <i class="calendar icon"></i> {{element.period}}
                 </p>
                 {{/element.hasPeriod}}
-                {{#element.location}}
-                <p style="color: #718096; margin: 0 0 5px 0; font-size: 0.9em;">
-                    <i class="map marker icon"></i> {{element.location}}
-                </p>
-                {{/element.location}}
+				{{#element.locationEntity}}
+				<p style="color: #718096; margin: 0 0 5px 0; font-size: 0.9em;">
+				    <i class="map marker icon"></i> {{element.locationEntity.name}}
+				</p>
+				{{/element.locationEntity}}
                 {{#element.description}}
                 <p style="color: #4a5568; margin: 10px 0 0 0; font-size: 0.95em; line-height: 1.5;">
                     {{element.description}}

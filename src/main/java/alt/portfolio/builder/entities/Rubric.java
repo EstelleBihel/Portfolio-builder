@@ -7,6 +7,7 @@ import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Transient;
 import lombok.Data;
@@ -26,9 +27,6 @@ public class Rubric {
 	@Column(length = 100, nullable = false)
 	private String name;
 
-	@Column(length = 50)
-	private String type; // FORMATION, EXPERIENCE, COMPETENCE, PROJET, LANGUE, LOISIR, AUTRE
-
 	@Column(length = 5000)
 	private String content; // Contenu de la rubrique (texte libre ou JSON)
 
@@ -42,6 +40,13 @@ public class Rubric {
 	@ManyToOne(optional = false, fetch = FetchType.LAZY)
 	@ToString.Exclude
 	private Profile profile;
+
+	// Relation vers la catégorie (évolution MCD)
+	// EAGER : la catégorie est toujours affichée (nom + emoji), on la charge avec
+	// la rubrique
+	@ManyToOne(fetch = FetchType.EAGER, optional = false)
+	@JoinColumn(name = "category_id")
+	private Category category;
 
 	// Champ transient (pas stocké en BDD, juste pour l'affichage)
 	@Transient
@@ -71,14 +76,6 @@ public class Rubric {
 
 	public void setName(String name) {
 		this.name = name;
-	}
-
-	public String getType() {
-		return type;
-	}
-
-	public void setType(String type) {
-		this.type = type;
 	}
 
 	public String getContent() {
@@ -115,5 +112,50 @@ public class Rubric {
 
 	public void setProfile(Profile profile) {
 		this.profile = profile;
+	}
+
+	public Category getCategory() {
+		return category;
+	}
+
+	public void setCategory(Category category) {
+		this.category = category;
+	}
+
+	// =========================================================================
+	// MÉTHODES UTILITAIRES POUR MUSTACHE (EPIC 4 - vues publiques)
+	// Basées sur la catégorie (relation) au lieu de l'ancien champ type
+	// =========================================================================
+
+	private boolean categoryNameEquals(String value) {
+		return category != null && value.equals(category.getName());
+	}
+
+	public boolean isTypeFormation() {
+		return categoryNameEquals("FORMATION");
+	}
+
+	public boolean isTypeExperience() {
+		return categoryNameEquals("EXPERIENCE");
+	}
+
+	public boolean isTypeCompetence() {
+		return categoryNameEquals("COMPETENCE");
+	}
+
+	public boolean isTypeProjet() {
+		return categoryNameEquals("PROJET");
+	}
+
+	public boolean isTypeLangue() {
+		return categoryNameEquals("LANGUE");
+	}
+
+	public boolean isTypeLoisir() {
+		return categoryNameEquals("LOISIR");
+	}
+
+	public boolean isTypeAutre() {
+		return categoryNameEquals("AUTRE");
 	}
 }

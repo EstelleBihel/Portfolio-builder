@@ -95,6 +95,7 @@ public class ProfileController {
 		mv.addObject("profile", profile);
 		mv.addObject("rubrics", rubrics);
 		mv.addObject("user", currentUser);
+		mv.addObject("categories", rubricService.getAllCategories());
 		return mv;
 	}
 

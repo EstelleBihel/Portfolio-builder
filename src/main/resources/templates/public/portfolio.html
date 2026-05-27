@@ -69,7 +69,9 @@
                     {{#subtitle}}<p class="subtitle">{{subtitle}}</p>{{/subtitle}}
                     <div class="meta">
                         {{#startDate}}<span>📅 {{startDate}} {{#endDate}}- {{endDate}}{{/endDate}}</span>{{/startDate}}
-                        {{#location}}<span>📍 {{location}}</span>{{/location}}
+                        {{#locationEntity}}
+						<span>📍 {{locationEntity.name}}</span>
+						{{/locationEntity}}
                     </div>
                     {{#description}}<p class="desc">{{description}}</p>{{/description}}
                     {{#link}}<a href="{{link}}" target="_blank" class="link">🔗 Voir le projet</a>{{/link}}

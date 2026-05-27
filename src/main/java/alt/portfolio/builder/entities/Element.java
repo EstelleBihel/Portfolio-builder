@@ -4,6 +4,7 @@ import java.util.UUID;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -34,9 +35,6 @@ public class Element {
 
 	@Column(length = 50)
 	private String endDate;
-
-	@Column(length = 255)
-	private String location;
 
 	@Column(length = 500)
 	private String link;
@@ -106,14 +104,6 @@ public class Element {
 		this.endDate = endDate;
 	}
 
-	public String getLocation() {
-		return location;
-	}
-
-	public void setLocation(String location) {
-		this.location = location;
-	}
-
 	public String getLink() {
 		return link;
 	}
@@ -137,6 +127,19 @@ public class Element {
 	public void setRubric(Rubric rubric) {
 		this.rubric = rubric;
 	}
+
+	public Location getLocationEntity() {
+		return locationEntity;
+	}
+
+	public void setLocationEntity(Location locationEntity) {
+		this.locationEntity = locationEntity;
+	}
+
+	// Relation vers la localisation (évolution MCD) - OPTIONNELLE (0,1)
+	@ManyToOne(fetch = FetchType.EAGER, optional = true)
+	@JoinColumn(name = "location_id")
+	private Location locationEntity;
 
 	// Helper pour afficher la periode
 	public String getPeriod() {

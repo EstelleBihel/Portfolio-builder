@@ -1,5 +1,6 @@
 package alt.portfolio.builder.controllers;
 
+import java.util.List;
 import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import alt.portfolio.builder.entities.Category;
 import alt.portfolio.builder.entities.Profile;
 import alt.portfolio.builder.entities.Rubric;
 import alt.portfolio.builder.entities.User;
@@ -33,12 +35,13 @@ public class RubricController {
 
 	// US-012 : Ajouter une rubrique a un profil POST
 	// /profiles/{profileId}/rubrics/add*/
+	// US-012 : Ajouter une rubrique a un profil POST
+	// /profiles/{profileId}/rubrics/add
 	@PostMapping("/profiles/{profileId}/rubrics/add")
 	public String addRubric(@PathVariable UUID profileId, @RequestParam String name,
-			@RequestParam(required = false) String type, @RequestParam(required = false) String content,
+			@RequestParam(required = false) UUID categoryId, @RequestParam(required = false) String content,
 			Authentication auth, RedirectAttributes redirectAttributes) {
 
-		// Verifier que le profil existe et appartient a l'utilisateur
 		Profile profile = profileService.getProfileById(profileId);
 		if (profile == null) {
 			redirectAttributes.addFlashAttribute("error", "Profil introuvable.");
@@ -51,7 +54,6 @@ public class RubricController {
 			return "redirect:/profiles/user/" + currentUser.getId();
 		}
 
-		// Validation du nom
 		if (name == null || name.trim().isEmpty()) {
 			redirectAttributes.addFlashAttribute("error", "Le nom de la rubrique est obligatoire.");
 			return "redirect:/profiles/" + profileId + "/edit";
@@ -62,13 +64,13 @@ public class RubricController {
 			name = name.substring(0, 100);
 		}
 
-		// Type par defaut
-		if (type == null || type.trim().isEmpty()) {
-			type = "AUTRE";
-		}
-
 		try {
-			rubricService.createRubric(profileId, name, type, content);
+			if (categoryId != null) {
+				rubricService.createRubricWithCategory(profileId, name, categoryId, content);
+			} else {
+				// fallback si aucune catégorie fournie
+				rubricService.createRubric(profileId, name, "AUTRE", content);
+			}
 			redirectAttributes.addFlashAttribute("success", "La rubrique \"" + name + "\" a ete ajoutee.");
 		} catch (Exception e) {
 			redirectAttributes.addFlashAttribute("error", "Erreur lors de l'ajout : " + e.getMessage());
@@ -101,13 +103,26 @@ public class RubricController {
 		mv.addObject("elements", elementService.getElementsByRubric(id));
 		mv.addObject("elementCount", elementService.countByRubric(id));
 
+		// Liste des catégories avec marquage de celle de la rubrique courante
+		List<Category> categories = rubricService.getAllCategories();
+		UUID currentCatId = rubric.getCategory() != null ? rubric.getCategory().getId() : null;
+		List<java.util.Map<String, Object>> categoryOptions = new java.util.ArrayList<>();
+		for (Category c : categories) {
+			java.util.Map<String, Object> opt = new java.util.HashMap<>();
+			opt.put("id", c.getId());
+			opt.put("name", c.getName());
+			opt.put("selected", c.getId().equals(currentCatId));
+			categoryOptions.add(opt);
+		}
+		mv.addObject("categories", categoryOptions);
+
 		return mv;
 	}
 
 	// US-013 : Enregistrer la modification d'une rubrique POST /rubrics/{id}/update
 	@PostMapping("/rubrics/{id}/update")
 	public String updateRubric(@PathVariable UUID id, @RequestParam String name,
-			@RequestParam(required = false) String type, @RequestParam(required = false) String content,
+			@RequestParam(required = false) UUID categoryId, @RequestParam(required = false) String content,
 			@RequestParam(required = false) Integer displayOrder, Authentication auth,
 			RedirectAttributes redirectAttributes) {
 
@@ -138,8 +153,11 @@ public class RubricController {
 
 		try {
 			rubric.setName(name);
-			if (type != null && !type.trim().isEmpty()) {
-				rubric.setType(type);
+			if (categoryId != null) {
+				rubricService.getAllCategories().stream().filter(c -> c.getId().equals(categoryId)).findFirst()
+						.ifPresent(c -> {
+							rubric.setCategory(c);
+						});
 			}
 			if (content != null) {
 				rubric.setContent(content.trim());

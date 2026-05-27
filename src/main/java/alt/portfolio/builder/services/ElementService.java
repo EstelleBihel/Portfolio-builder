@@ -8,8 +8,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import alt.portfolio.builder.entities.Element;
+import alt.portfolio.builder.entities.Location;
 import alt.portfolio.builder.entities.Rubric;
 import alt.portfolio.builder.repositories.ElementRepository;
+import alt.portfolio.builder.repositories.LocationRepository;
 import alt.portfolio.builder.repositories.RubricRepository;
 
 //Service pour la gestion des elements US-017
@@ -21,6 +23,9 @@ public class ElementService {
 
 	@Autowired
 	private RubricRepository rubricRepository;
+
+	@Autowired
+	private LocationRepository locationRepository;
 
 	// Recuperer tous les elements d'une rubrique
 	public List<Element> getElementsByRubric(UUID rubricId) {
@@ -52,10 +57,10 @@ public class ElementService {
 		element.setDescription(description);
 		element.setStartDate(startDate);
 		element.setEndDate(endDate);
-		element.setLocation(location);
 		element.setLink(link);
 		element.setDisplayOrder(newOrder);
 		element.setRubric(rubric);
+		element.setLocationEntity(resolveLocation(location));
 
 		return elementRepository.save(element);
 	}
@@ -130,5 +135,21 @@ public class ElementService {
 	// Compter les elements d'une rubrique
 	public long countByRubric(UUID rubricId) {
 		return elementRepository.countByRubricId(rubricId);
+	}
+
+	// Resout (ou crée) une location à partir d'un texte (transition MCD)
+	public Location resolveLocation(String locationText) {
+		if (locationText == null || locationText.trim().isEmpty()) {
+			return null; // relation optionnelle : pas de lieu = pas de location
+		}
+		String name = locationText.trim();
+		Location location = locationRepository.findByName(name);
+		if (location == null) {
+			// Crée la location si elle n'existe pas encore
+			location = new Location();
+			location.setName(name);
+			location = locationRepository.save(location);
+		}
+		return location;
 	}
 }

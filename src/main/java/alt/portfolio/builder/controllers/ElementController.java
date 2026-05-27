@@ -135,7 +135,7 @@ public class ElementController {
 			element.setDescription(description != null ? description.trim() : null);
 			element.setStartDate(startDate != null && !startDate.trim().isEmpty() ? startDate.trim() : null);
 			element.setEndDate(endDate != null && !endDate.trim().isEmpty() ? endDate.trim() : null);
-			element.setLocation(location != null ? location.trim() : null);
+			element.setLocationEntity(elementService.resolveLocation(location));
 			element.setLink(link != null ? link.trim() : null);
 
 			elementService.saveElement(element);

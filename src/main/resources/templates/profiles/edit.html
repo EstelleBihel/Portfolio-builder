@@ -63,17 +63,41 @@
                 </div>
                 
                 <div class="field">
-                    <label>Slug (URL publique)</label>
+                    <label>Slug (identifiant URL)</label>
                     <div class="ui labeled input" style="width: 100%;">
-                        <div class="ui label">/p/</div>
+                        <div class="ui label">URL</div>
                         <input type="text" name="slug" value="{{profile.slug}}" maxlength="100">
                     </div>
+                    <small style="color: #888; display: block; margin-top: 4px;">
+                        <i class="info circle icon"></i>
+                        Cet identifiant sera utilise pour vos 2 URLs publiques : <code>/cv/{slug}</code> et <code>/p/{slug}</code>
+                    </small>
                 </div>
                 
-                <div class="field">
-                    <div class="ui toggle checkbox">
-                        <input type="checkbox" name="isPublished" {{#profile.isPublished}}checked{{/profile.isPublished}}>
-                        <label><strong>Publier ce profil</strong></label>
+                <!-- US-022 : Publication independante CV et/ou Portfolio -->
+                <div class="ui segment" style="background: #f9fafb; border: 1px solid #e5e7eb;">
+                    <h5 class="ui header" style="margin-top: 0;">
+                        <i class="globe icon"></i>
+                        <div class="content">
+                            Publication
+                            <div class="sub header">Activez independamment chaque mode de visualisation</div>
+                        </div>
+                    </h5>
+                    
+                    <div class="ui divider"></div>
+                    
+                    <div class="field">
+                        <div class="ui toggle checkbox">
+                            <input type="checkbox" name="isPublishedCv" {{#profile.isCvPublished}}checked{{/profile.isCvPublished}}>
+                            <label><i class="file alternate icon" style="color: #3b82f6;"></i> <strong>Publier en mode CV</strong> &mdash; vue epuree A4</label>
+                        </div>
+                    </div>
+                    
+                    <div class="field" style="margin-top: 10px;">
+                        <div class="ui toggle checkbox">
+                            <input type="checkbox" name="isPublishedPortfolio" {{#profile.isPortfolioPublished}}checked{{/profile.isPortfolioPublished}}>
+                            <label><i class="briefcase icon" style="color: #764ba2;"></i> <strong>Publier en mode Portfolio</strong> &mdash; vue detaillee avec projets</label>
+                        </div>
                     </div>
                 </div>
                 
@@ -110,10 +134,10 @@
                             <h4 class="ui header" style="margin: 0;">
                                 <i class="folder icon rubric-icon"></i>
                                 {{name}}
-                                <div class="sub header">
-                                    <span class="ui tiny label">{{type}}</span>
-                                    <span class="ui tiny grey label hidden-label" style="display: none;">Masquee</span>
-                                </div>
+                               <div class="sub header">
+    <span class="ui tiny label">{{category.name}}</span>
+    <span class="ui tiny grey label hidden-label" style="display: none;">Masquee</span>
+</div>
                             </h4>
                         </div>
                         <div class="eight wide column right aligned">
@@ -173,28 +197,102 @@
     
     <!-- Colonne laterale -->
     <div class="six wide column">
-        <!-- Statut du profil -->
+        <!-- Statut du profil par mode -->
         <div class="ui segment">
             <h4 class="ui header">
                 <i class="flag icon"></i> Statut
             </h4>
-            {{#profile.isPublished}}
-            <div class="ui green label"><i class="globe icon"></i> Publie</div>
-            {{/profile.isPublished}}
-            {{^profile.isPublished}}
-            <div class="ui grey label"><i class="eye slash icon"></i> Brouillon</div>
-            {{/profile.isPublished}}
+            
+            <div style="display: flex; flex-direction: column; gap: 8px;">
+                {{#profile.isCvPublished}}
+                <div class="ui blue label" style="text-align: left;">
+                    <i class="file alternate icon"></i> CV publie
+                </div>
+                {{/profile.isCvPublished}}
+                {{^profile.isCvPublished}}
+                <div class="ui basic label" style="text-align: left;">
+                    <i class="eye slash icon"></i> CV brouillon
+                </div>
+                {{/profile.isCvPublished}}
+                
+                {{#profile.isPortfolioPublished}}
+                <div class="ui purple label" style="text-align: left;">
+                    <i class="briefcase icon"></i> Portfolio publie
+                </div>
+                {{/profile.isPortfolioPublished}}
+                {{^profile.isPortfolioPublished}}
+                <div class="ui basic label" style="text-align: left;">
+                    <i class="eye slash icon"></i> Portfolio brouillon
+                </div>
+                {{/profile.isPortfolioPublished}}
+            </div>
         </div>
         
-        <!-- Actions -->
+        <!-- US-027 : URLs publiques -->
+        <div class="ui segment">
+            <h4 class="ui header">
+                <i class="linkify icon"></i> URLs publiques
+            </h4>
+            
+            {{#profile.isCvPublished}}
+            <div style="margin-bottom: 12px;">
+                <label style="display: block; font-size: 0.85em; color: #666; margin-bottom: 4px;">
+                    <i class="file alternate icon"></i> CV
+                </label>
+                <div class="ui action input" style="width: 100%;">
+                    <input type="text" id="cvUrlInput" value="" readonly style="font-size: 0.85em;">
+                    <button class="ui blue icon button" type="button" onclick="copyToClipboard('cvUrlInput', this)" title="Copier l'URL">
+                        <i class="copy icon"></i>
+                    </button>
+                    <a class="ui icon button" href="" id="cvUrlOpen" target="_blank" title="Ouvrir dans un nouvel onglet">
+                        <i class="external alternate icon"></i>
+                    </a>
+                </div>
+            </div>
+            {{/profile.isCvPublished}}
+            
+            {{#profile.isPortfolioPublished}}
+            <div>
+                <label style="display: block; font-size: 0.85em; color: #666; margin-bottom: 4px;">
+                    <i class="briefcase icon"></i> Portfolio
+                </label>
+                <div class="ui action input" style="width: 100%;">
+                    <input type="text" id="portfolioUrlInput" value="" readonly style="font-size: 0.85em;">
+                    <button class="ui purple icon button" type="button" onclick="copyToClipboard('portfolioUrlInput', this)" title="Copier l'URL">
+                        <i class="copy icon"></i>
+                    </button>
+                    <a class="ui icon button" href="" id="portfolioUrlOpen" target="_blank" title="Ouvrir dans un nouvel onglet">
+                        <i class="external alternate icon"></i>
+                    </a>
+                </div>
+            </div>
+            {{/profile.isPortfolioPublished}}
+            
+            {{^profile.isCvPublished}}
+            {{^profile.isPortfolioPublished}}
+            <p style="color: #999; font-size: 0.9em; text-align: center; padding: 10px;">
+                <i class="info circle icon"></i> Activez au moins un mode de publication pour generer vos URLs
+            </p>
+            {{/profile.isPortfolioPublished}}
+            {{/profile.isCvPublished}}
+            
+            <!-- Donnees cachees pour le JS -->
+            <span id="profileSlugData" data-slug="{{profile.slug}}" style="display: none;"></span>
+        </div>
+        
+        <!-- Actions (US-021 : Previsualisation) -->
         <div class="ui segment">
             <h4 class="ui header">
                 <i class="lightning icon"></i> Actions
             </h4>
             <div class="ui vertical fluid buttons">
-                <a href="/profiles/{{profile.id}}/preview" class="ui button">
-                    <i class="eye icon"></i> Apercu
+                <a href="/profiles/{{profile.id}}/preview?mode=cv" class="ui blue button">
+                    <i class="file alternate icon"></i> Apercu en mode CV
                 </a>
+                <a href="/profiles/{{profile.id}}/preview?mode=portfolio" class="ui purple button">
+                    <i class="briefcase icon"></i> Apercu en mode Portfolio
+                </a>
+                <div class="ui horizontal divider">Zone dangereuse</div>
                 <button class="ui red button" onclick="$('#deleteProfileModal').modal('show');">
                     <i class="trash icon"></i> Supprimer le profil
                 </button>
@@ -215,18 +313,14 @@
                 <label>Nom de la rubrique</label>
                 <input type="text" name="name" placeholder="Ex: Formation, Experience..." required maxlength="100">
             </div>
-            <div class="field">
-                <label>Type</label>
-                <select name="type" class="ui dropdown">
-                    <option value="FORMATION">Formation</option>
-                    <option value="EXPERIENCE">Experience professionnelle</option>
-                    <option value="COMPETENCE">Competences</option>
-                    <option value="PROJET">Projets</option>
-                    <option value="LANGUE">Langues</option>
-                    <option value="LOISIR">Loisirs / Interets</option>
-                    <option value="AUTRE" selected>Autre</option>
-                </select>
-            </div>
+<div class="field">
+    <label>Categorie</label>
+    <select name="categoryId" class="ui dropdown">
+        {{#categories}}
+        <option value="{{id}}">{{name}}</option>
+        {{/categories}}
+    </select>
+</div>
             <div class="field">
                 <label>Contenu (optionnel)</label>
                 <textarea name="content" rows="3" placeholder="Decrivez le contenu de cette rubrique..."></textarea>
@@ -303,12 +397,63 @@ $(document).ready(function() {
             $(this).find('.rubric-icon').css('color', '#667eea');
         }
     });
+    
+    // ============================================================
+    // US-027 : Gestion des URLs publiques + copie clipboard
+    // ============================================================
+    var slug = $('#profileSlugData').data('slug');
+    var baseUrl = window.location.protocol + '//' + window.location.host;
+    
+    // Remplit les inputs et les liens "ouvrir"
+    if (slug) {
+        var cvUrl = baseUrl + '/cv/' + slug;
+        var portfolioUrl = baseUrl + '/p/' + slug;
+        
+        $('#cvUrlInput').val(cvUrl);
+        $('#cvUrlOpen').attr('href', cvUrl);
+        
+        $('#portfolioUrlInput').val(portfolioUrl);
+        $('#portfolioUrlOpen').attr('href', portfolioUrl);
+    }
 });
 
 function confirmDeleteRubric(id, name) {
     $('#rubricNameToDelete').text('"' + name + '"');
     $('#deleteRubricForm').attr('action', '/rubrics/' + id + '/delete');
     $('#deleteRubricModal').modal('show');
+}
+
+// US-027 : Copier dans le presse-papier avec feedback visuel
+function copyToClipboard(inputId, btnElement) {
+    var input = document.getElementById(inputId);
+    if (!input || !input.value) return;
+    
+    // Methode moderne (API Clipboard)
+    if (navigator.clipboard && window.isSecureContext) {
+        navigator.clipboard.writeText(input.value).then(function() {
+            showCopyFeedback(btnElement);
+        });
+    } else {
+        // Fallback pour HTTP / vieux navigateurs
+        input.select();
+        document.execCommand('copy');
+        showCopyFeedback(btnElement);
+    }
+}
+
+// Feedback visuel : l'icone passe en check pendant 2 secondes
+function showCopyFeedback(btnElement) {
+    var $btn = $(btnElement);
+    var $icon = $btn.find('i');
+    var originalClass = $icon.attr('class');
+    
+    $icon.attr('class', 'check icon');
+    $btn.addClass('positive');
+    
+    setTimeout(function() {
+        $icon.attr('class', originalClass);
+        $btn.removeClass('positive');
+    }, 2000);
 }
 </script>
 

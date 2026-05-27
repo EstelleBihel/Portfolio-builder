@@ -68,7 +68,9 @@
                         </div>
                         <div class="meta">
                             {{#startDate}}<span class="period">{{startDate}} {{#endDate}}- {{endDate}}{{/endDate}}</span>{{/startDate}}
-                            {{#location}}<span class="location">{{location}}</span>{{/location}}
+                            {{#locationEntity}}
+								<span style="display: block; font-size: 0.75rem; color: #9ca3af;">{{locationEntity.name}}</span>
+							{{/locationEntity}}
                         </div>
                     </div>
                     {{#description}}<p class="desc">{{description}}</p>{{/description}}

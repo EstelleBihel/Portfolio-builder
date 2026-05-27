@@ -55,15 +55,13 @@
                         <input type="text" name="name" value="{{rubric.name}}" required maxlength="100">
                     </div>
                     <div class="field">
-                        <label>Type</label>
-                        <select name="type" class="ui dropdown">
-                            <option value="EXPERIENCE" {{#rubric.typeExperience}}selected{{/rubric.typeExperience}}>Experience</option>
-                            <option value="FORMATION" {{#rubric.typeFormation}}selected{{/rubric.typeFormation}}>Formation</option>
-                            <option value="COMPETENCE" {{#rubric.typeCompetence}}selected{{/rubric.typeCompetence}}>Competence</option>
-                            <option value="PROJET" {{#rubric.typeProjet}}selected{{/rubric.typeProjet}}>Projet</option>
-                            <option value="AUTRE" {{#rubric.typeAutre}}selected{{/rubric.typeAutre}}>Autre</option>
-                        </select>
-                    </div>
+					    <label>Categorie</label>
+ 					    <select name="categoryId" class="ui dropdown">
+				        {{#categories}}
+				        <option value="{{id}}" {{#selected}}selected{{/selected}}>{{name}}</option>
+				        {{/categories}}
+					    </select>
+					</div>
                 </div>
                 
                 <div class="field">
@@ -104,11 +102,11 @@
                         <i class="calendar icon"></i> {{period}}
                     </p>
                     {{/hasPeriod}}
-                    {{#location}}
-                    <p style="color: #718096; margin: 0 0 5px 0; font-size: 0.9em;">
-                        <i class="map marker icon"></i> {{location}}
-                    </p>
-                    {{/location}}
+                 	 {{#locationEntity}}
+					 <p style="color: #718096; margin: 0 0 5px 0; font-size: 0.9em;">
+    					<i class="map marker icon"></i> {{locationEntity.name}}
+					 </p>
+					{{/locationEntity}}
                     {{#description}}
                     <p style="color: #4a5568; margin: 5px 0 0 0; font-size: 0.95em; line-height: 1.5;">
                         {{description}}
