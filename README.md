@@ -1,6 +1,6 @@
 <div align="center">
 
-# 🎨 Portfolio Builder
+# Portfolio Builder
 
 ### Créez et partagez vos portfolios professionnels en quelques clics
 
@@ -9,7 +9,7 @@
 [![MySQL](https://img.shields.io/badge/MySQL-8.0-blue?style=for-the-badge&logo=mysql&logoColor=white)](https://www.mysql.com/)
 [![License](https://img.shields.io/badge/License-MIT-yellow?style=for-the-badge)](LICENSE)
 
-[🚀 Démo Live](http://projet1-srv1-vm-22110.sts-sio-caen.info) • [📖 Documentation](#-documentation) • [🛠️ Installation](#️-installation)
+[Démo Live](http://projet1-srv1-vm-22110.sts-sio-caen.info) • [Documentation](#documentation) • [Installation](#installation)
 
 ---
 
@@ -17,61 +17,81 @@
 
 </div>
 
-## 📋 Table des matières
+## Table des matières
 
-- [✨ Fonctionnalités](#-fonctionnalités)
-- [🏗️ Architecture](#️-architecture)
-- [🛠️ Installation](#️-installation)
-- [⚙️ Configuration](#️-configuration)
-- [🚀 Déploiement](#-déploiement)
-- [📖 Documentation](#-documentation)
-- [🧪 Tests](#-tests)
-- [👥 Comptes de démonstration](#-comptes-de-démonstration)
-- [📝 License](#-license)
+- [Fonctionnalités](#fonctionnalités)
+- [Architecture](#architecture)
+- [Installation](#installation)
+- [Configuration](#configuration)
+- [Déploiement](#déploiement)
+- [Documentation](#documentation)
+- [Tests](#tests)
+- [Comptes de démonstration](#comptes-de-démonstration)
+- [License](#license)
 
 ---
 
-## ✨ Fonctionnalités
+## Fonctionnalités
 
 <table>
 <tr>
 <td width="50%">
 
-### 👤 Gestion des utilisateurs
-- ✅ Inscription avec validation
-- ✅ Connexion sécurisée (Spring Security)
-- ✅ Gestion des rôles (USER / ADMIN)
-- ✅ Upload de photo de profil
-- ✅ Modification du compte
+### Gestion des utilisateurs
+- Inscription avec validation
+- Connexion sécurisée (Spring Security)
+- Gestion des rôles (USER / ADMIN)
+- Upload de photo de profil
+- Modification du compte
 
 </td>
 <td width="50%">
 
-### 📁 Gestion des profils
-- ✅ Création de profils multiples (CV, Portfolio)
-- ✅ Publication / Dépublication
-- ✅ URL publique unique
-- ✅ Prévisualisation avant publication
+### Gestion des profils
+- Création de profils multiples (CV, Portfolio)
+- Publication / Dépublication
+- URL publique unique
+- Prévisualisation avant publication
 
 </td>
 </tr>
 <tr>
 <td width="50%">
 
-### 📝 Rubriques & Éléments
-- ✅ CRUD complet des rubriques
-- ✅ Gestion des éléments par rubrique
-- ✅ Réorganisation par position
-- ✅ Visibilité configurable
+### Rubriques & Éléments
+- CRUD complet des rubriques
+- Gestion des éléments par rubrique
+- Réorganisation par position
+- Visibilité configurable
 
 </td>
 <td width="50%">
 
-### 🔒 Sécurité & Administration
-- ✅ Authentification BCrypt
-- ✅ Protection des routes par rôles
-- ✅ Page d'erreur 404 personnalisée
-- ✅ Panel d'administration
+### Sécurité & Administration
+- Authentification BCrypt
+- Protection des routes par rôles
+- Page d'erreur 404 personnalisée
+- Panel d'administration
+
+</td>
+</tr>
+<tr>
+<td width="50%">
+
+### Catégories de rubriques
+- Catégorisation par entité dédiée (Formation, Expérience, Compétence, Projet, Langue, Loisir, Autre)
+- Attributs métier (hasDates, hasLink) pilotant l'affichage
+- Référentiel centralisé en base
+- Sélection via dropdown dynamique
+
+</td>
+<td width="50%">
+
+### Lieux des éléments
+- Gestion des localisations par entité dédiée
+- Relation optionnelle (un élément peut ne pas avoir de lieu)
+- Réutilisation automatique d'un lieu existant
+- Normalisation des données (pas de doublon)
 
 </td>
 </tr>
@@ -79,25 +99,23 @@
 
 ---
 
-## 🏗️ Architecture
+## Architecture
 
-```
-📦 portfolio-builder
-├── 📂 src/main/java/alt/portfolio/builder
-│   ├── 📂 application          # Advice, Exceptions
-│   ├── 📂 config               # SecurityConfig, WebConfig
-│   ├── 📂 controllers          # Spring MVC Controllers
-│   ├── 📂 entities             # JPA Entities
-│   ├── 📂 repositories         # Spring Data JPA
-│   └── 📂 services             # Business Logic
-├── 📂 src/main/resources
-│   ├── 📂 templates            # Mustache Templates
-│   ├── 📂 static               # CSS, JS, Images
-│   └── 📄 application.properties
-└── 📄 pom.xml
-```
+portfolio-builder
+├──  src/main/java/alt/portfolio/builder
+│   ├──  application          # Advice, Exceptions
+│   ├──  config               # SecurityConfig, WebConfig
+│   ├──  controllers          # Spring MVC Controllers
+│   ├──  entities             # JPA Entities (User, Profile, Rubric, Element, Category, Location)
+│   ├──  repositories         # Spring Data JPA
+│   └──  services             # Business Logic
+├──  src/main/resources
+│   ├──  templates            # Mustache Templates
+│   ├──  static               # CSS, JS, Images
+│   └──  application.properties
+└──  pom.xml
 
-### 🔧 Stack Technique
+### Stack Technique
 
 | Composant | Technologie |
 |-----------|-------------|
@@ -107,14 +125,16 @@
 | **Build** | Maven 3.9+ |
 | **Serveur** | Tomcat embarqué |
 
-### 📊 Modèle de données
+### Modèle de données
 
 ```mermaid
 erDiagram
     USER ||--o{ PROFILE : owns
     PROFILE ||--o{ RUBRIC : contains
+    CATEGORY ||--o{ RUBRIC : classifies
     RUBRIC ||--o{ ELEMENT : contains
-    
+    LOCATION ||--o{ ELEMENT : locates
+
     USER {
         UUID id PK
         string username UK
@@ -125,43 +145,74 @@ erDiagram
         string role
         string avatar_url
     }
-    
+
     PROFILE {
         UUID id PK
         string name
-        string type
+        text description
         string slug UK
-        boolean is_published
-        UUID user_id FK
+        boolean is_published_cv
+        boolean is_published_portfolio
+        UUID owner_id FK
     }
-    
+
+    CATEGORY {
+        UUID id PK
+        string name
+        boolean has_dates
+        boolean has_link
+    }
+
     RUBRIC {
         UUID id PK
-        string title
-        int position
-        boolean is_visible
+        string name
+        text content
+        int display_order
+        boolean visible
         UUID profile_id FK
+        UUID category_id FK
     }
-    
+
+    LOCATION {
+        UUID id PK
+        string name
+        text address
+    }
+
     ELEMENT {
         UUID id PK
         string title
-        text content
-        int position
+        string subtitle
+        text description
+        string start_date
+        string end_date
+        string link
+        int display_order
         UUID rubric_id FK
+        UUID location_id FK
     }
 ```
 
+**Cardinalités des relations**
+
+| Relation | Cardinalité | Description |
+|----------|-------------|-------------|
+| User → Profile | 1,N | Un utilisateur possède plusieurs profils |
+| Profile → Rubric | 1,N | Un profil contient plusieurs rubriques |
+| Category → Rubric | 1,N (obligatoire) | Une rubrique appartient à une catégorie |
+| Rubric → Element | 1,N | Une rubrique contient plusieurs éléments |
+| Location → Element | 1,N (optionnelle) | Un élément peut avoir un lieu |
+
 ---
 
-## 🛠️ Installation
+## Installation
 
 ### Prérequis
 
-- ☕ **Java 17+** (recommandé : Java 21)
-- 📦 **Maven 3.9+**
-- 🐬 **MySQL 8.0+** ou **MariaDB 10.5+**
-- 🔧 **Git**
+- **Java 17+** (recommandé : Java 21)
+- **Maven 3.9+**
+- **MySQL 8.0+** ou **MariaDB 10.5+**
+- **Git**
 
 ### Installation rapide
 
@@ -183,9 +234,11 @@ mysql -u root -p -e "GRANT ALL PRIVILEGES ON portfolio.* TO 'portfolio'@'localho
 
 L'application sera accessible sur **http://localhost:8080**
 
+> **Note** : au premier démarrage, Hibernate crée automatiquement toutes les tables (User, Profile, Rubric, Element, Category, Location). Pensez à insérer ensuite les 7 catégories de référence via le script SQL fourni dans `/sql`.
+
 ---
 
-## ⚙️ Configuration
+## Configuration
 
 Créez ou modifiez le fichier `src/main/resources/application.properties` :
 
@@ -206,6 +259,10 @@ spring.mustache.suffix=.html
 
 # Serveur
 server.port=8080
+server.shutdown=graceful
+
+# DevTools (désactivé pour éviter les processus zombies)
+spring.devtools.restart.enabled=false
 
 # Upload fichiers
 spring.servlet.multipart.max-file-size=5MB
@@ -214,7 +271,7 @@ spring.servlet.multipart.max-request-size=5MB
 
 ---
 
-## 🚀 Déploiement
+## Déploiement
 
 ### Compilation
 
@@ -258,31 +315,33 @@ WantedBy=multi-user.target
 
 ---
 
-## 👥 Comptes de démonstration
+## Comptes de démonstration
 
 | Rôle | Username | Email | Mot de passe |
 |------|----------|-------|--------------|
-| 👑 **Admin** | `admin` | admin@portfolio.fr | `Admin123!` |
-| 👤 **User** | `user` | user@portfolio.fr | `User123!` |
+| **Admin** | `admin` | admin@portfolio.fr | `Admin123!` |
+| **User** | `user` | user@portfolio.fr | `User123!` |
 
-> 🔗 **Démo live** : [http://projet1-srv1-vm-22110.sts-sio-caen.info](http://projet1-srv1-vm-22110.sts-sio-caen.info)
+> **Démo live** : [http://projet1-srv1-vm-22110.sts-sio-caen.info](http://projet1-srv1-vm-22110.sts-sio-caen.info)
 
 ---
 
-## 📖 Documentation
 
-### API Endpoints
+### Routes principales
 
 | Méthode | Endpoint | Description | Auth |
 |---------|----------|-------------|------|
-| `GET` | `/` | Page d'accueil | ❌ |
-| `GET` | `/login` | Page de connexion | ❌ |
-| `GET` | `/users/register` | Inscription | ❌ |
-| `GET` | `/dashboard` | Dashboard utilisateur | ✅ USER |
-| `GET` | `/profiles` | Liste des profils | ✅ USER |
-| `GET` | `/profiles/{id}` | Détail d'un profil | ✅ USER |
-| `GET` | `/p/{slug}` | Profil public | ❌ |
-| `GET` | `/users` | Liste des utilisateurs | ✅ ADMIN |
+| `GET` | `/` | Page d'accueil |  |
+| `GET` | `/login` | Page de connexion |  |
+| `GET` | `/users/register` | Inscription |  |
+| `GET` | `/dashboard` | Dashboard utilisateur | USER |
+| `GET` | `/profiles` | Liste des profils | USER |
+| `GET` | `/profiles/{id}/edit` | Édition d'un profil | USER |
+| `GET` | `/rubrics/{id}/edit` | Édition d'une rubrique | USER |
+| `GET` | `/elements/{id}/edit` | Édition d'un élément | USER |
+| `GET` | `/p/{slug}` | Portfolio public |  |
+| `GET` | `/cv/{slug}` | CV public |  |
+| `GET` | `/users` | Liste des utilisateurs | ADMIN |
 
 ### Structure des EPICs
 
@@ -292,12 +351,13 @@ WantedBy=multi-user.target
 | **EPIC 1** | Gestion utilisateurs | US-001 à US-005 |
 | **EPIC 2** | Gestion des profils | US-006 à US-011 |
 | **EPIC 3** | Rubriques & éléments | US-012 à US-020 |
-| **EPIC 4** | Publication & partage | US-021 à US-027 |
+| **EPIC 4** | Publication & partage (CV / Portfolio) | US-021 à US-027 |
 | **EPIC 5** | Personnalisation | US-028 à US-030 |
+| **EPIC 6** | Évolution MCD (Catégories & Lieux) | US-031 à US-035 |
 
 ---
 
-## 🧪 Tests
+## Tests
 
 ```bash
 # Exécuter tous les tests
@@ -309,48 +369,33 @@ WantedBy=multi-user.target
 
 ---
 
-## 📁 Scripts SQL
+## Scripts SQL
 
 Le script de création de la base de données est disponible dans le dossier `/sql` :
 
-```bash
-mysql -u portfolio -p portfolio < sql/schema.sql
-```
-
 ---
 
-## 🤝 Contribution
+## Contribution
 
 1. Fork le projet
-2. Créer une branche feature (`git checkout -b feature/AmazingFeature`)
-3. Commit les changements (`git commit -m 'Add AmazingFeature'`)
-4. Push sur la branche (`git push origin feature/AmazingFeature`)
+2. Créer une branche feature 
+3. Commit les changements 
+4. Push sur la branche 
 5. Ouvrir une Pull Request
 
 ---
 
-## 📝 License
-
-Ce projet est réalisé dans le cadre du **BTS SIO SLAM** - Session 2026.
-
-Distribué sous la licence MIT. Voir `LICENSE` pour plus d'informations.
-
----
-
-## 👩‍💻 Auteur
+## Auteur
 
 **Estelle BIHEL**
 
-- 🎓 BTS SIO SLAM - CaenSup
-- 📧 estelle.bihel@sts-sio-caen.info
-- 🔗 [GitHub](https://github.com/EstelleBihel)
+- BTS SIO SLAM - CaenSup
+- estelle.bihel@sts-sio-caen.info
+- [GitHub](https://github.com/EstelleBihel)
 
 ---
 
 <div align="center">
 
-**⭐ Si ce projet vous a été utile, n'hésitez pas à lui donner une étoile !**
-
-Made with ❤️ and ☕ in Normandie
 
 </div>
