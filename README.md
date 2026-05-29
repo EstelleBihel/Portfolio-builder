@@ -13,8 +13,6 @@
 
 ---
 
-<img src="https://raw.githubusercontent.com/EstelleBihel/Portfolio-builder/main/docs/screenshot-home.png" alt="Portfolio Builder Screenshot" width="80%">
-
 </div>
 
 ## Table des matières
